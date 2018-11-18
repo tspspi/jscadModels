@@ -95,7 +95,8 @@ window.jscad.tspi.involuteGear = function(printer, params) {
 		{ name: 'centerholeRadius',		type: 'number',					default: 0				},
 		{ name: 'resolution',			type: 'number',					default: 5				},
 		{ name: 'inclination',			type: 'number',					default: 0				},
-		{ name: 'inclinationSteps',		type: 'number',					default: 25				}
+		{ name: 'inclinationSteps',		type: 'number',					default: 25				},
+		{ name: 'doubleHelical',		type: 'boolean',				default: false			},
 	];
 
 	knownPrinterParameters = [
@@ -140,6 +141,7 @@ window.jscad.tspi.involuteGear = function(printer, params) {
 	this.clearance					= this.parameters['clearance'];
 
 	this.centerholeRadius			= this.parameters['centerholeRadius'] + (this.printer['correctionInsideDiameter'] / 2.0);
+	this.doubleHelical				= this.parameters['doubleHelical'];
 
 	this.pitchDiameter				= this.teethNumber / this.circularPitch;
 	this.pitchRadius				= this.pitchDiameter / 2.0;
@@ -151,11 +153,15 @@ window.jscad.tspi.involuteGear = function(printer, params) {
 	this.outsideRadius				= this.outsideDiameter / 2.0;
 	this.rootDiameter				= this.pitchDiameter - 2*this.dedendum;
 	this.rootRadius					= this.rootDiameter / 2.0;
-
+	
 	this.getModel = function() {
 		var maxTangentLength = Math.sqrt(this.outsideRadius*this.outsideRadius - this.baseCircleRadius*this.baseCircleRadius);
 		var maxAngle = maxTangentLength / this.baseCircleRadius;
 
+		if(this.doubleHelical) {
+			this.thickness = this.thickness/2;
+		}
+		
 		var angle;
 		var currentAngle;
 		var currentTangentLength;
@@ -228,6 +234,15 @@ window.jscad.tspi.involuteGear = function(printer, params) {
 			);
 		} else {
 			result = gear.translate([0,0,-this.thickness/2.0]);
+		}
+
+		if(this.doubleHelical) {
+			result = result.translate([0,0, this.thickness/2]);
+			result = union(
+				result,
+				result.mirroredZ()
+			);
+			this.thickness = this.thickness*2;
 		}
 		return result.rotateZ(-360 / (4 * this.teethNumber));
 	};
