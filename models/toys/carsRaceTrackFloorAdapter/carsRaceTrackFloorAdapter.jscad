@@ -69,12 +69,12 @@ function getParameterDefinitions() {
     return [
         { name : 'vWidth', type : 'float', initial: 18.0, caption: "V Width"},
         { name : 'vClearance', type : 'float', initial: 0.1, caption: "V Clearance"},
-        { name : 'vLength', type : 'float', initial: 13.6, caption: "V Length"},
+        { name : 'vLength', type : 'float', initial: 8.8, caption: "V Length"},
         { name : 'vFlatLength', type : 'float', initial: 4.8, caption: "V flat length"},
         { name : 'vOffset', type : 'float', initial: 14.8, caption: "V offset"},
         { name : 'vIndent', type: 'float', initial: 0.8, caption: "V indention"},
 
-        { name : 'thickness', type : 'float', initial: 5, caption: "Thickness"},
+        { name : 'thickness', type : 'float', initial: 8, caption: "Thickness"},
         { name : 'width', type : 'float', initial: 51, caption: "Width"},
         { name : 'length', type : 'float', initial: 100, caption: "Length"}
     ];
