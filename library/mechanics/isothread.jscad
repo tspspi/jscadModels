@@ -157,9 +157,9 @@ window.jscad.tspi.isoNut = function(printer, params) {
 	this.h = this.getNormThickness(this.normparams, this.norm) * this.printer['scale'];
 	this.ro = this.s / (2 * Math.cos(30 * Math.PI / 180))  * this.printer['scale']; // Outside radius
 	this.corehole = this.normparams.corehole  * this.printer['scale'];
-	this.throughhole_fine = this.normparams.throughhole_fine * this.printer['correctionInsideDiameter'];
-	this.throughhole_medium = this.normparams.throughhole_medium * this.printer['correctionInsideDiameter'];
-	this.throughhole_coarse = this.normparams.throughhole_coarse * this.printer['correctionInsideDiameter'];
+	this.throughhole_fine = this.normparams.throughhole_fine + this.printer['correctionInsideDiameter'];
+	this.throughhole_medium = this.normparams.throughhole_medium + this.printer['correctionInsideDiameter'];
+	this.throughhole_coarse = this.normparams.throughhole_coarse + this.printer['correctionInsideDiameter'];
 
 	this.getModel = function() {
 		var leff = this.l + 2*this.printer['correctionInsideDiameter'];
