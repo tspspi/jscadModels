@@ -1,6 +1,6 @@
 /*
 	ISO Threads library.
-	
+
 	Currently implements:
 		Nut Templates (without threading; Inside diameter correction currently affects
 					   outside diameter because it's an template)
@@ -31,21 +31,21 @@
 /*
 	Example:
 
-	include('/mechanics/isothread.jscad');	
+	include('/mechanics/isothread.jscad');
 
-	function getParameterDefinitions() {	
-		return [	
+	function getParameterDefinitions() {
+		return [
 			{ name: 'm', type: 'float', initial: 8, caption: "M" },
-			{ name : 'correctionInsideDiameter', type : 'float', initial : 0, caption : 'Inside diameter correction' },	
-			{ name : 'correctionOutsideDiameter', type : 'float', initial : 0, caption : 'Outside diameter correction' },	
+			{ name : 'correctionInsideDiameter', type : 'float', initial : 0, caption : 'Inside diameter correction' },
+			{ name : 'correctionOutsideDiameter', type : 'float', initial : 0, caption : 'Outside diameter correction' },
 			{ name : 'scale' , type : 'float' , initial : 1, caption : 'Scale' }
-		];	
+		];
 	}
 
-	function main(params) {	
-		var nut = new window.jscad.tspi.isoNut( params, { m : params.m  });	
-		return nut.getModel();	
-	}	
+	function main(params) {
+		var nut = new window.jscad.tspi.isoNut( params, { m : params.m  });
+		return nut.getModel();
+	}
 */
 
 if(typeof window === 'undefined') { window = new Object(); }
@@ -91,36 +91,36 @@ window.jscad.tspi.isoNut = function(printer, params) {
 
 
 	this.metricDimensions = [
-		{ m :  1  , s :  2.5, hISO4032 : -1  , hDIN934 :  0.8, ISO4035 : -1   , corehole :  0.75 },
-		{ m :  1.2, s :  3  , hISO4032 : -1  , hDIN934 :  1.0, ISO4035 : -1   , corehole :  0.95 },
-		{ m :  1.4, s :  3  , hISO4032 : -1  , hDIN934 :  1.2, ISO4035 :  1.0 , corehole : -1    },
-		{ m :  1.6, s :  3.2, hISO4032 :  1.3, hDIN934 :  1.3, ISO4035 :  1.0 , corehole :  1.25 },
-		{ m :  2  , s :  4  , hISO4032 :  1.6, hDIN934 :  1.6, ISO4035 :  1.2 , corehole :  1.6  },
-		{ m :  2.5, s :  5  , hISO4032 :  2.0, hDIN934 :  2.0, ISO4035 :  1.6 , corehole :  2.05 },
-		{ m :  3  , s :  5.5, hISO4032 :  2.4, hDIN934 :  2.4, ISO4035 :  1.8 , corehole :  2.5  },
-		{ m :  3.5, s :  6  , hISO4032 :  2.8, hDIN934 :  2.8, ISO4035 :  2.0 , corehole : -1    },
-		{ m :  4  , s :  7  , hISO4032 :  3.2, hDIN934 :  3.2, ISO4035 :  2.2 , corehole :  3.3  },
-		{ m :  5  , s :  8  , hISO4032 :  4.7, hDIN934 :  4.0, ISO4035 :  2.7 , corehole :  4.2  },
-		{ m :  6  , s : 10  , hISO4032 :  5.2, hDIN934 :  5.0, ISO4035 :  3.2 , corehole :  5    },
-		{ m :  8  , s : 13  , hISO4032 :  6.8, hDIN934 :  6.5, ISO4035 :  4.0 , corehole :  6.8  }, 
-		{ m : 10  , s : 16  , hISO4032 :  8.4, hDIN934 :  8.0, ISO4035 :  5.0 , corehole :  8.5  },
-		{ m : 12  , s : 18  , hISO4032 : 10.8, hDIN934 : 10.0, ISO4035 :  6.0 , corehole : 10.2  },
-		{ m : 14  , s : 21  , hISO4032 : 12.8, hDIN934 : 11.0, ISO4035 :  7.0 , corehole : -1    },
-		{ m : 16  , s : 24  , hISO4032 : 14.8, hDIN934 : 13.0, ISO4035 :  8.0 , corehole : 14    },
-		{ m : 18  , s : 27  , hISO4032 : 15.8, hDIN934 : 15.0, ISO4035 :  9.0 , corehole : -1    },
-		{ m : 20  , s : 30  , hISO4032 : 18.0, hDIN934 : 16.0, ISO4035 : 10.0 , corehole : 17.5  },
-		{ m : 22  , s : 34  , hISO4032 : 19.4, hDIN934 : 18.0, ISO4035 : 11.0 , corehole : -1    },
-		{ m : 24  , s : 36  , hISO4032 : 21.5, hDIN934 : 19.0, ISO4035 : 12.0 , corehole : 21    },
-		{ m : 30  , s : 46  , hISO4032 : 25.6, hDIN934 : 24.0, ISO4035 : 15.0 , corehole : 26.5  },
-		{ m : 33  , s : 50  , hISO4032 : 28.7, hDIN934 : 26.0, ISO4035 : 16.5 , corehole : -1    },
-		{ m : 36  , s : 55  , hISO4032 : 31.0, hDIN934 : 29.0, ISO4035 : 18.0 , corehole : 32    },
-		{ m : 39  , s : 60  , hISO4032 : 33.4, hDIN934 : 31.0, ISO4035 : 19.5 , corehole : -1    },
-		{ m : 42  , s : 65  , hISO4032 : 34.0, hDIN934 : 34.0, ISO4035 : 21.0 , corehole : 37.5  },
-		{ m : 45  , s : 70  , hISO4032 : 36.0, hDIN934 : 36.0, ISO4035 : 22.5 , corehole : -1    },
-		{ m : 48  , s : 75  , hISO4032 : 38.0, hDIN934 : 38.0, ISO4035 : 24.0 , corehole : 43    },
-		{ m : 52  , s : 80  , hISO4032 : 42.0, hDIN934 : 42.0, ISO4035 : 26.0 , corehole : -1    },
-		{ m : 56  , s : 85  , hISO4032 : 45.0, hDIN934 :  -1 , ISO4035 : 28.0 , corehole : 50.5  },
-		{ m : 64  , s : 95  , hISO4032 : 51.0, hDIN934 :  -1 , ISO4035 : 32.0 , corehole : 58    }
+		{ m :  1  , s :  2.5, hISO4032 : -1  , hDIN934 :  0.8, ISO4035 : -1   , corehole :  0.75 , throughhole_fine :  1.1 , throughhole_medium :  1.2 , throughhole_coarse :  1.3 },
+		{ m :  1.2, s :  3  , hISO4032 : -1  , hDIN934 :  1.0, ISO4035 : -1   , corehole :  0.95 , throughhole_fine :  1.3 , throughhole_medium :  1.4 , throughhole_coarse :  1.5 },
+		{ m :  1.4, s :  3  , hISO4032 : -1  , hDIN934 :  1.2, ISO4035 :  1.0 , corehole : -1    , throughhole_fine :  1.5 , throughhole_medium :  1.6 , throughhole_coarse :  1.8 },
+		{ m :  1.6, s :  3.2, hISO4032 :  1.3, hDIN934 :  1.3, ISO4035 :  1.0 , corehole :  1.25 , throughhole_fine :  1.7 , throughhole_medium :  1.8 , throughhole_coarse :  2.0 },
+		{ m :  2  , s :  4  , hISO4032 :  1.6, hDIN934 :  1.6, ISO4035 :  1.2 , corehole :  1.6  , throughhole_fine :  2.2 , throughhole_medium :  2.4 , throughhole_coarse :  2.6 },
+		{ m :  2.5, s :  5  , hISO4032 :  2.0, hDIN934 :  2.0, ISO4035 :  1.6 , corehole :  2.05 , throughhole_fine :  2.7 , throughhole_medium :  2.9 , throughhole_coarse :  3.1 },
+		{ m :  3  , s :  5.5, hISO4032 :  2.4, hDIN934 :  2.4, ISO4035 :  1.8 , corehole :  2.5  , throughhole_fine :  3.2 , throughhole_medium :  3.4 , throughhole_coarse :  3.6 },
+		{ m :  3.5, s :  6  , hISO4032 :  2.8, hDIN934 :  2.8, ISO4035 :  2.0 , corehole : -1    , throughhole_fine :  3.7 , throughhole_medium :  3.9 , throughhole_coarse :  4.2 },
+		{ m :  4  , s :  7  , hISO4032 :  3.2, hDIN934 :  3.2, ISO4035 :  2.2 , corehole :  3.3  , throughhole_fine :  4.3 , throughhole_medium :  4.5 , throughhole_coarse :  4.8 },
+		{ m :  5  , s :  8  , hISO4032 :  4.7, hDIN934 :  4.0, ISO4035 :  2.7 , corehole :  4.2  , throughhole_fine :  5.3 , throughhole_medium :  5.5 , throughhole_coarse :  5.8 },
+		{ m :  6  , s : 10  , hISO4032 :  5.2, hDIN934 :  5.0, ISO4035 :  3.2 , corehole :  5    , throughhole_fine :  6.4 , throughhole_medium :  6.6 , throughhole_coarse :  7.0 },
+		{ m :  8  , s : 13  , hISO4032 :  6.8, hDIN934 :  6.5, ISO4035 :  4.0 , corehole :  6.8  , throughhole_fine :  8.4 , throughhole_medium :  9.0 , throughhole_coarse : 10.0 },
+		{ m : 10  , s : 16  , hISO4032 :  8.4, hDIN934 :  8.0, ISO4035 :  5.0 , corehole :  8.5  , throughhole_fine : 10.5 , throughhole_medium : 11.0 , throughhole_coarse : 12.0 },
+		{ m : 12  , s : 18  , hISO4032 : 10.8, hDIN934 : 10.0, ISO4035 :  6.0 , corehole : 10.2  , throughhole_fine : 13.0 , throughhole_medium : 13.5 , throughhole_coarse : 14.5 },
+		{ m : 14  , s : 21  , hISO4032 : 12.8, hDIN934 : 11.0, ISO4035 :  7.0 , corehole : -1    , throughhole_fine : 15.0 , throughhole_medium : 15.5 , throughhole_coarse : 16.5 },
+		{ m : 16  , s : 24  , hISO4032 : 14.8, hDIN934 : 13.0, ISO4035 :  8.0 , corehole : 14    , throughhole_fine : 17.0 , throughhole_medium : 17.5 , throughhole_coarse : 18.5 },
+		{ m : 18  , s : 27  , hISO4032 : 15.8, hDIN934 : 15.0, ISO4035 :  9.0 , corehole : -1    , throughhole_fine : 19.0 , throughhole_medium : 20.0 , throughhole_coarse : 21.0 },
+		{ m : 20  , s : 30  , hISO4032 : 18.0, hDIN934 : 16.0, ISO4035 : 10.0 , corehole : 17.5  , throughhole_fine : 21.0 , throughhole_medium : 22.0 , throughhole_coarse : 24.0 },
+		{ m : 22  , s : 34  , hISO4032 : 19.4, hDIN934 : 18.0, ISO4035 : 11.0 , corehole : -1    , throughhole_fine : 23.0 , throughhole_medium : 24.0 , throughhole_coarse : 26.0 },
+		{ m : 24  , s : 36  , hISO4032 : 21.5, hDIN934 : 19.0, ISO4035 : 12.0 , corehole : 21    , throughhole_fine : 25.0 , throughhole_medium : 26.0 , throughhole_coarse : 28.0 },
+		{ m : 30  , s : 46  , hISO4032 : 25.6, hDIN934 : 24.0, ISO4035 : 15.0 , corehole : 26.5  , throughhole_fine : 31.0 , throughhole_medium : 33.0 , throughhole_coarse : 35.0 },
+		{ m : 33  , s : 50  , hISO4032 : 28.7, hDIN934 : 26.0, ISO4035 : 16.5 , corehole : -1    , throughhole_fine : 34.0 , throughhole_medium : 36.0 , throughhole_coarse : 38.0 },
+		{ m : 36  , s : 55  , hISO4032 : 31.0, hDIN934 : 29.0, ISO4035 : 18.0 , corehole : 32    , throughhole_fine : 37.0 , throughhole_medium : 39.0 , throughhole_coarse : 42.0 },
+		{ m : 39  , s : 60  , hISO4032 : 33.4, hDIN934 : 31.0, ISO4035 : 19.5 , corehole : -1    , throughhole_fine : 40.0 , throughhole_medium : 42.0 , throughhole_coarse : 44.0 },
+		{ m : 42  , s : 65  , hISO4032 : 34.0, hDIN934 : 34.0, ISO4035 : 21.0 , corehole : 37.5  , throughhole_fine : 43.0 , throughhole_medium : 45.0 , throughhole_coarse : 48.0 },
+		{ m : 45  , s : 70  , hISO4032 : 36.0, hDIN934 : 36.0, ISO4035 : 22.5 , corehole : -1    , throughhole_fine : 46.0 , throughhole_medium : 48.0 , throughhole_coarse : 52.0 },
+		{ m : 48  , s : 75  , hISO4032 : 38.0, hDIN934 : 38.0, ISO4035 : 24.0 , corehole : 43    , throughhole_fine : 49.0 , throughhole_medium : 52.0 , throughhole_coarse : 56.0 },
+		{ m : 52  , s : 80  , hISO4032 : 42.0, hDIN934 : 42.0, ISO4035 : 26.0 , corehole : -1    , throughhole_fine : 53.0 , throughhole_medium : 57.0 , throughhole_coarse : 60.0 },
+		{ m : 56  , s : 85  , hISO4032 : 45.0, hDIN934 :  -1 , ISO4035 : 28.0 , corehole : 50.5  , throughhole_fine : 57.0 , throughhole_medium : 62.0 , throughhole_coarse : 66.0 },
+		{ m : 64  , s : 95  , hISO4032 : 51.0, hDIN934 :  -1 , ISO4035 : 32.0 , corehole : 58    , throughhole_fine : 65.0 , throughhole_medium : 70.0 , throughhole_coarse : 74.0 }
 	];
 
 	this.getNormParameter = function(m) {
@@ -157,6 +157,9 @@ window.jscad.tspi.isoNut = function(printer, params) {
 	this.h = this.getNormThickness(this.normparams, this.norm) * this.printer['scale'];
 	this.ro = this.s / (2 * Math.cos(30 * Math.PI / 180))  * this.printer['scale']; // Outside radius
 	this.corehole = this.normparams.corehole  * this.printer['scale'];
+	this.throughhole_fine = this.normparams.throughhole_fine * this.printer['correctionInsideDiameter'];
+	this.throughhole_medium = this.normparams.throughhole_medium * this.printer['correctionInsideDiameter'];
+	this.throughhole_coarse = this.normparams.throughhole_coarse * this.printer['correctionInsideDiameter'];
 
 	this.getModel = function() {
 		var leff = this.l + 2*this.printer['correctionInsideDiameter'];
@@ -193,5 +196,8 @@ window.jscad.tspi.isoNut = function(printer, params) {
 	this.getRadiusThreadCore = function() {
 		return this.corehole;
 	}
-}
 
+	this.getThroughholeFine = function()	{ return this.throughhole_fine; }
+	this.getThroughholeMedium = function()	{ return this.throughhole_medium; }
+	this.getThroughholeCoarse = function()	{ return this.throughhole_coarse; }
+}
