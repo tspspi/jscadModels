@@ -16,9 +16,12 @@ if(typeof window.jscad.tspi.mechanics !== 'object') { window.jscad.tspi.mechanic
 
 /*
 	Usage:
-	
-		var step = new window.jscad.tspi.mechanics.stepperSG90({}, { horn : 3});
-		return step.getModel();
+		include('/mechanics/servoSG90.jscad');
+
+		function main() {
+			var step = new window.jscad.tspi.mechanics.stepperSG90({}, { horn : 3, center: true });
+			return step.getModel();
+		}
 
 	Options:
 		horn			Selects which type of horn should be added
