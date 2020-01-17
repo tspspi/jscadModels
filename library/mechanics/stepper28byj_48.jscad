@@ -37,7 +37,7 @@
 
 /*
     Usage example:
-    
+
         function main() {
             var stepper = new window.jscad.tspi.mechanics.stepper28BYJ_48({}, {});
 
@@ -52,7 +52,8 @@ if(typeof window.jscad.tspi.mechanics !== 'object') { window.jscad.tspi.mechanic
 
 window.jscad.tspi.mechanics.stepper28BYJ_48 = function(printer, params) {
     knownParameters = [
-        { name: 'shaft',                        type: 'boolean',    default: true    },
+        { name: 'shaft',                        type: 'boolean',    default: true    	},
+		{ name : 'screwholes',					type: 'boolean',	default: true		},
     ];
 
     knownPrinterParameters = [
@@ -86,30 +87,52 @@ window.jscad.tspi.mechanics.stepper28BYJ_48 = function(printer, params) {
     }
 
     this.getModel = function() {
-        return union(
-            cylinder({ r : 28.0/2+this.printer['correctionInsideDiameter']/2, h : 19, center : true, fn: this.printer['resolutionCircle'] }).translate([0,-8, -19/2 ]).setColor([0.8, 0.8, 0.8]),
-            difference(
+		if(this.parameters['screwholes']) {
+	        return union(
+	            cylinder({ r : 28.0/2+this.printer['correctionInsideDiameter']/2, h : 19, center : true, fn: this.printer['resolutionCircle'] }).translate([0,-8, -19/2 ]).setColor([0.8, 0.8, 0.8]),
+	            difference(
+	                union(
+	                    cube({ size : [42-7+this.printer['correctionInsideDiameter'], 7+this.printer['correctionInsideDiameter'], 1], center: true }).translate([0,-8+this.printer['correctionInsideDiameter']/2,-0.5]),
+	                    cylinder({ r : (7.0+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([-(42-7-this.printer['correctionInsideDiameter'])/2,-8+this.printer['correctionInsideDiameter']/2,-0.5]),
+	                    cylinder({ r : (7.0+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([(42-7-this.printer['correctionInsideDiameter'])/2,-8+this.printer['correctionInsideDiameter']/2,-0.5])
+	                ),
+	                union(
+	                    cylinder({ r : (3.5+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([-(42-7)/2,-8,-0.5]),
+	                    cylinder({ r : (3.5+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([(42-7)/2,-8,-0.5])
+	                )
+	            ).setColor([0.8, 0.8, 0.8]),
+	            cube({ size : [ 9.5+this.printer['correctionInsideDiameter'], 17+this.printer['correctionInsideDiameter'], 17.5+this.printer['correctionInsideDiameter'] ], center : true }).translate([0,-17-this.printer['correctionInsideDiameter'],-17.5/2-this.printer['correctionInsideDiameter']/2]).setColor([0,0,1]),
+	            cube({ size : [ 17.5+this.printer['correctionInsideDiameter'], 17-3+this.printer['correctionInsideDiameter'], 18+this.printer['correctionInsideDiameter'] ], center : true }).translate([0,-17+3-this.printer['correctionInsideDiameter'],-18/2-this.printer['correctionInsideDiameter']/2]).setColor([0,0,1]),
+	            cylinder({ r : 9.2/2+this.printer['correctionInsideDiameter'], h: 1.5+this.printer['correctionInsideDiameter'], center: true, fn: this.printer['resolutionCircle'] }).translate([0,0,1.5/2+this.printer['correctionInsideDiameter']/2]).setColor([0.8, 0.8, 0.8]),
+	            difference(
+	                cylinder({ r : (5+this.printer['correctionInsideDiameter'])/2, h : 10+this.printer['correctionInsideDiameter'], center : true, fn: this.printer['resolutionCircle'] }).translate([0,0,10/2+this.printer['correctionInsideDiameter']/2]).setColor([1,0,0]),
+	                union(
+	                    cube({size : [5, 1+this.printer['correctionInsideDiameter'], 6+this.printer['correctionInsideDiameter']]}).translate([-2.5,1.5,4]),
+	                    cube({size : [5, 1+this.printer['correctionInsideDiameter'], 6+this.printer['correctionInsideDiameter']]}).translate([-2.5,-1-+this.printer['correctionInsideDiameter']-1.5,4])
+	                )
+	            ),
+	            cube({size : [ 8, 1, 5 ], center : true}).translate([0, -0.5-24.6, -2.5]).setColor([1,0,0])
+	        ).scale(this.printer['scale']);
+		} else {
+			return union(
+	            cylinder({ r : 28.0/2+this.printer['correctionInsideDiameter']/2, h : 19, center : true, fn: this.printer['resolutionCircle'] }).translate([0,-8, -19/2 ]).setColor([0.8, 0.8, 0.8]),
                 union(
                     cube({ size : [42-7+this.printer['correctionInsideDiameter'], 7+this.printer['correctionInsideDiameter'], 1], center: true }).translate([0,-8+this.printer['correctionInsideDiameter']/2,-0.5]),
                     cylinder({ r : (7.0+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([-(42-7-this.printer['correctionInsideDiameter'])/2,-8+this.printer['correctionInsideDiameter']/2,-0.5]),
                     cylinder({ r : (7.0+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([(42-7-this.printer['correctionInsideDiameter'])/2,-8+this.printer['correctionInsideDiameter']/2,-0.5])
-                ),
-                union(
-                    cylinder({ r : (3.5+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([-(42-7)/2,-8,-0.5]),
-                    cylinder({ r : (3.5+this.printer['correctionInsideDiameter'])/2, h : 1 , center: true, fn: this.printer['resolutionCircle'] }).translate([(42-7)/2,-8,-0.5])
-                )
-            ).setColor([0.8, 0.8, 0.8]),
-            cube({ size : [ 9.5+this.printer['correctionInsideDiameter'], 17+this.printer['correctionInsideDiameter'], 17.5+this.printer['correctionInsideDiameter'] ], center : true }).translate([0,-17-this.printer['correctionInsideDiameter'],-17.5/2-this.printer['correctionInsideDiameter']/2]).setColor([0,0,1]),
-            cube({ size : [ 17.5+this.printer['correctionInsideDiameter'], 17-3+this.printer['correctionInsideDiameter'], 18+this.printer['correctionInsideDiameter'] ], center : true }).translate([0,-17+3-this.printer['correctionInsideDiameter'],-18/2-this.printer['correctionInsideDiameter']/2]).setColor([0,0,1]),
-            cylinder({ r : 9.2/2+this.printer['correctionInsideDiameter'], h: 1.5+this.printer['correctionInsideDiameter'], center: true, fn: this.printer['resolutionCircle'] }).translate([0,0,1.5/2+this.printer['correctionInsideDiameter']/2]).setColor([0.8, 0.8, 0.8]),
-            difference(
-                cylinder({ r : (5+this.printer['correctionInsideDiameter'])/2, h : 10+this.printer['correctionInsideDiameter'], center : true, fn: this.printer['resolutionCircle'] }).translate([0,0,10/2+this.printer['correctionInsideDiameter']/2]).setColor([1,0,0]),
-                union(
-                    cube({size : [5, 1+this.printer['correctionInsideDiameter'], 6+this.printer['correctionInsideDiameter']]}).translate([-2.5,1.5,4]),
-                    cube({size : [5, 1+this.printer['correctionInsideDiameter'], 6+this.printer['correctionInsideDiameter']]}).translate([-2.5,-1-+this.printer['correctionInsideDiameter']-1.5,4])
-                )
-            ),
-            cube({size : [ 8, 1, 5 ], center : true}).translate([0, -0.5-24.6, -2.5]).setColor([1,0,0])
-        ).scale(this.printer['scale']);
+	            ).setColor([0.8, 0.8, 0.8]),
+	            cube({ size : [ 9.5+this.printer['correctionInsideDiameter'], 17+this.printer['correctionInsideDiameter'], 17.5+this.printer['correctionInsideDiameter'] ], center : true }).translate([0,-17-this.printer['correctionInsideDiameter'],-17.5/2-this.printer['correctionInsideDiameter']/2]).setColor([0,0,1]),
+	            cube({ size : [ 17.5+this.printer['correctionInsideDiameter'], 17-3+this.printer['correctionInsideDiameter'], 18+this.printer['correctionInsideDiameter'] ], center : true }).translate([0,-17+3-this.printer['correctionInsideDiameter'],-18/2-this.printer['correctionInsideDiameter']/2]).setColor([0,0,1]),
+	            cylinder({ r : 9.2/2+this.printer['correctionInsideDiameter'], h: 1.5+this.printer['correctionInsideDiameter'], center: true, fn: this.printer['resolutionCircle'] }).translate([0,0,1.5/2+this.printer['correctionInsideDiameter']/2]).setColor([0.8, 0.8, 0.8]),
+	            difference(
+	                cylinder({ r : (5+this.printer['correctionInsideDiameter'])/2, h : 10+this.printer['correctionInsideDiameter'], center : true, fn: this.printer['resolutionCircle'] }).translate([0,0,10/2+this.printer['correctionInsideDiameter']/2]).setColor([1,0,0]),
+	                union(
+	                    cube({size : [5, 1+this.printer['correctionInsideDiameter'], 6+this.printer['correctionInsideDiameter']]}).translate([-2.5,1.5,4]),
+	                    cube({size : [5, 1+this.printer['correctionInsideDiameter'], 6+this.printer['correctionInsideDiameter']]}).translate([-2.5,-1-+this.printer['correctionInsideDiameter']-1.5,4])
+	                )
+	            ),
+	            cube({size : [ 8, 1, 5 ], center : true}).translate([0, -0.5-24.6, -2.5]).setColor([1,0,0])
+	        ).scale(this.printer['scale']);
+		}
     }
 }
