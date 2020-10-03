@@ -88,7 +88,24 @@ window.jscad.tspi.isoNut = function(printer, params) {
 		}
 	}
 
-
+	this.metricScrewDimensionsDIN912_ISO4762 = [
+		{ m : 1.4, dk : 2.6,   k : 1.4, s : 1.3, b : 10, d : 1.4},
+		{ m : 1.6, dk : 3,     k : 1.6, s : 1.5, b : 12, d : 1.6},
+		{ m : 2,   dk : 3.8,   k : 2,   s : 1.5, b : 14, d : 2  },
+		{ m : 2.5, dk : 4.5,   k : 2.5, s : 2,   b : 16, d : 2.5},
+		{ m : 3,   dk : 5.68,  k : 3,   s : 2.5, b : 18, d : 3  },
+		{ m : 4,   dk : 7.22,  k : 4,   s : 3,   b : 20, d : 4  },
+		{ m : 5,   dk : 8.72,  k : 5,   s : 4,   b : 22, d : 5  },
+		{ m : 6,   dk : 10.22, k : 6,   s : 5,   b : 24, d : 6  },
+		{ m : 8,   dk : 13.27, k : 8,   s : 6,   b : 28, d : 8  },
+		{ m : 10,  dk : 16.27, k : 10,  s : 8,   b : 32, d : 10 },
+		{ m : 12,  dk : 18.27, k : 12,  s : 10,  b : 36, d : 12 },
+		{ m : 14,  dk : 21.33, k : 14,  s : 12,  b : 40, d : 14 },
+		{ m : 16,  dk : 24.33, k : 16,  s : 14,  b : 44, d : 16 },
+		{ m : 18,  dk : 27.33, k : 18,  s : 14,  b : 48, d : 18 },
+		{ m : 20,  dk : 30.33, k : 20,  s : 17,  b : 52, d : 20 },
+		{ m : 24,  dk : 36.39, k : 24,  s : 19,  b : 60, d : 24 }
+	];
 
 	this.metricDimensions = [
 		{ m :  1  , s :  2.5, hISO4032 : -1  , hDIN934 :  0.8, ISO4035 : -1   , corehole :  0.75 , throughhole_fine :  1.1 , throughhole_medium :  1.2 , throughhole_coarse :  1.3 },
