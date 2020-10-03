@@ -1,6 +1,10 @@
 /*
     LM8LUU linear ball bearing template
 
+	This is a template for an LM8LUU ball bearing
+	(see for example https://amzn.to/3nfPiFC - note: affiliate link, this codes author
+	profits from qualified purchases)
+
     Note: Origin set set in center of bearing
 
     If you think this code was useful BTC
