@@ -46,6 +46,7 @@ function getParameterDefinitions() {
         { name : 'rollerID', title : 'Roller inner diameter', type : 'float', default : 6 },
 		{ name : 'rollerH', title : 'Roller height', type : 'float', default : 7 },
         { name : 'rollerScrewMetric', title : 'Roller screw metric (Mx)', type : 'int', default : 8 },
+		{ name : 'rollerWallContact', title: 'Roller contact wall (only inside correction)', type : 'checkbox', checked : true },
 
 		{ name : 'washerThickness', title : 'Washer thickness', type : 'float', default : 1 },
 
@@ -61,6 +62,12 @@ function getParameterDefinitions() {
 		{ name : 'cableHoleWidth', type : 'float', default : 5 },
 		{ name : 'cableHoleHeight', type : 'float', default : 2 },
 
+		{ name : 'enableRotor', title : 'Enable rotor model', type : 'checkbox', checked : true },
+		{ name : 'enableStator1', title : 'Enable stator top model', type : 'checkbox', checked : true },
+		{ name : 'enableStator2', title : 'Enable stator bottom model', type : 'checkbox', checked : true },
+		{ name : 'setCutModelStato1', title : 'Display cut model of stator 1', type : 'checkbox', checked : false },
+		{ name : 'viewStepper', title : 'View stepper motor model', type : 'checkbox', checked : false },
+		{ name : 'viewBearings', title : 'View bearings', type : 'checkbox', checked : false },
 
         { name : 'scale', type : 'float', default : 1.0 },
 		{ name : 'fn', type : 'int', default : 32 },
@@ -147,11 +154,12 @@ function rotor(params) {
         union(screwcut)
     );
 
-    // DEBUG
-    roller = union(
-        roller,
-        union(ballbearings)
-    );
+	if(params['viewBearings']) {
+		roller = union(
+	        roller,
+	        union(ballbearings)
+	    );
+	}
 
 	var stepper = new window.jscad.tspi.mechanics.stepper28BYJ_48(printer, {});
 
@@ -159,6 +167,10 @@ function rotor(params) {
 	    roller.translate([0,0,nutTpl.getHeight()]),
 	    stepper.getModel().translate([0,0,-rotorHeight/2-1.5]).scale(1.01)
     );
+
+	if(params['viewStepper']) {
+		roller = union(roller, stepper.getModel().translate([0,0,-rotorHeight/2-1.5]));
+	}
 
     return roller;
 }
@@ -197,13 +209,22 @@ function stator01(params) {
     var nutTpl = new window.jscad.tspi.isoNut(params, { m : rollerScrewMetric });
     var rotorHeightReal = nutTpl.getHeight() + 2 * minWallThickness + rollerheight * nbearingsstacked + 2*washerThickness + params['correctionInsideDiameter'];
 
-
-
+	// Space in which the rallers roll
     var basisBlock = cube({ size : [ mainBlockSizeA, mainBlockSizeB, rotorHeightReal + nutTpl.getHeight()/2], center : true }).translate([0,0,-nutTpl.getHeight()/2]);
-    basisBlock = difference(
-        basisBlock,
-        cylinder({ d : rotorDiameter + params['correctionInsideDiameter'] + 2*rollerExpose + 2*minSpacingAndInset, h : rotorHeightReal + nutTpl.getHeight() + 0.5, center : true, fn : fnSteps }).translate([0,0,-0.5]) // Constant: 0.5 is spacing between rotor and stator at bottom ...
-    );
+	if(!(params['rollerWallContact'])) {
+    	basisBlock = difference(
+        	basisBlock,
+        	cylinder({ d : rotorDiameter + params['correctionInsideDiameter'] + 2*rollerExpose + 2*minSpacingAndInset, h : rotorHeightReal + nutTpl.getHeight() + 0.5, center : true, fn : fnSteps }).translate([0,0,-0.5]) // Constant: 0.5 is spacing between rotor and stator at bottom ...
+    	);
+	} else {
+		basisBlock = difference(
+        	basisBlock,
+        	cylinder({ d : rotorDiameter + params['correctionInsideDiameter'] + 2*rollerExpose, h : rotorHeightReal + nutTpl.getHeight() + 0.5, center : true, fn : fnSteps }).translate([0,0,-0.5]) // Constant: 0.5 is spacing between rotor and stator at bottom ...
+    	);
+	}
+
+
+	// Groove in which the pipe is squeezed
 	var pipeFlatDiameter = rotorDiameter + params['correctionInsideDiameter'] + 2*rollerExpose + 4*minSpacingAndInset;
     basisBlock = difference(
         basisBlock,
@@ -214,20 +235,20 @@ function stator01(params) {
 	var pipeCut = cylinder({ d : pipeod + params['correctionInsideDiameter'], h : mainBlockSizeA/2, center : true}).rotateY(90);
 	basisBlock = difference(
 		basisBlock,
-		pipeCut.translate([mainBlockSizeA/4, pipeFlatDiameter/2 - (pipeod+params['correctionInsideDiameter'])/2, 0])
+		pipeCut.translate([mainBlockSizeA/4, pipeFlatDiameter/2 - (pipeod+params['correctionInsideDiameter'])/2, 0]).rotateZ(-90)
 	);
 	basisBlock = difference(
 		basisBlock,
-		pipeCut.translate([mainBlockSizeA/4, -1 * (pipeFlatDiameter/2 - (pipeod+params['correctionInsideDiameter'])/2), 0])
+		pipeCut.translate([mainBlockSizeA/4, -1 * (pipeFlatDiameter/2 - (pipeod+params['correctionInsideDiameter'])/2), 0]).rotateZ(-90)
 	);
 
     // Rendering a cut model to illustrate goove layout:
-	/*
-        basisBlock = difference(
-            basisBlock.translate([0,0,0]),
-            cube({ size : [ 100, 100, 100 ]}).translate([0,0,-50])
-        );
-	*/
+	if(params['setCutModelStato1']) {
+		basisBlock = difference(
+			basisBlock.translate([0,0,0]),
+			cube({ size : [ 100, 100, 100 ]}).translate([0,0,-50])
+		);
+	}
     basisBlock = basisBlock.translate([0,0,nutTpl.getHeight()]);
 
     var stepper = new window.jscad.tspi.mechanics.stepper28BYJ_48(params, {});
@@ -284,12 +305,22 @@ function stator02(params) {
 	var holeHeight = params['cableHoleHeight'];
 	block = difference(block, cube(( { size : [holeLength, 2*minWallThickness, holeHeight]})).translate([-holeLength/2, mainBlockSizeB/2 - 2*minWallThickness, (-1*(rotorHeightReal + nutTpl.getHeight()/2)/2 + nutTpl.getHeight()/2) - cHeight - cableGrooveDepth/4]).setColor([0,1,0]));
 
+	if(params['viewStepper']) {
+		block = union(block, stepper.getModel().translate([0,0,-rotorHeight/2-1.5]));
+	}
+
 	return block;
 }
 
 
 function main(params) {
-	return stator02(params);
+	var parts = [];
+
+	if(params['enableRotor']) { parts.push(rotor(params)); }
+	if(params['enableStator1']) { parts.push(stator01(params)); }
+	if(params['enableStator2']) { parts.push(stator02(params)); }
+
+	return union(parts);
 	/* union(
         stator01(params),
         rotor(params)
