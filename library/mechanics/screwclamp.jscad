@@ -54,15 +54,16 @@ if(typeof window.jscad.tspi !== 'object') { window.jscad.tspi = new Object(); }
 if(typeof window.jscad.tspi.mechanics !== 'object') { window.jscad.tspi.mechanics = new Object(); }
 
 window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
-	knownParameters = [
+	let knownParameters = [
 		{ name: 'm',				type: 'number',					default: -1				},
 		{ name: 'screwLength',		type: 'number',					default: -1				},
 		{ name: 'rodDiameter',		type: 'number',					default: -1				},
 		{ name: 'onlyPrintedPart',	type: 'boolean',				default: true			},
 		{ name: 'slitWidth',		type: 'number',					default: 0				},
+		{ name: 'minWallThickness',	type: 'number',					default: 1				},
 	];
 
-	knownPrinterParameters = [
+	let knownPrinterParameters = [
 		{ name: 'scale', 						type: 'number', 	default: 1 		},
 		{ name: 'correctionInsideDiameter', 	type: 'number', 	default: 0 		},
 		{ name: 'correctionOutsideDiameter', 	type: 'number', 	default: 0 		},
@@ -100,7 +101,7 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 
 		let displayPrintedPartOnly = this.parameters['onlyPrintedPart'] || false;
 
-		let minWallSize = 1;
+		let minWallSize = this.parameters['minWallThickness'] || 1;
 
 		let modelWireMountNut = new window.jscad.tspi.isoNut( printer, { m :  metricNutDimension });
 		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
