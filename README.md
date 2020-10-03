@@ -3,6 +3,12 @@
 This repository contains some of my personally developed OpenJSCAD models
 and libraries.
 
+## Installation
+
+Note that the libraries are usually expected to be deployed on an server that
+hosts an OpenJSCAD instance. On my setups I simply deploy the content of
+the ```library``` folder to the ```/openjscad.jscad/```.
+
 ## Libraries
 
 * Electronics
