@@ -4,7 +4,7 @@
     Note: Origin is normally set in the lower
 	edge of the servo. The origin can be set
 	into the axis with {center:true} parameter.
-	
+
     If you think this code was useful BTC
     contributions are welcome at
     19sKN38N4yxWZXoZeAdXZb5rq9xk32aDP4
@@ -32,7 +32,7 @@ if(typeof window.jscad.tspi.mechanics !== 'object') { window.jscad.tspi.mechanic
 		enableHorn		Decides if the horn should be painted (default true)
 		enableServo		Decides if the servo itself should be painted (default true)
 		center			If set centers the servo so that the axis passes through 0,0,0
-						with the horn being in the upper plane and the 
+						with the horn being in the upper plane and the
 
 	Printer options:
 		scale	Applied scaling factor
@@ -43,6 +43,7 @@ window.jscad.tspi.mechanics.stepperSG90 = function(printer, params) {
 		{ name: 'center',						type: 'boolean',		default: false	},
 		{ name: 'enableHorn',					type: 'boolean',		default: true },
 		{ name: 'enableServo',					type: 'boolean',		default: true },
+		{ name : 'hornHoles',					type: 'boolean',		default: true },
 		/*
 			Servo horn selection
 				0 	none
@@ -82,7 +83,7 @@ window.jscad.tspi.mechanics.stepperSG90 = function(printer, params) {
 			this.error = false;
 		}
 	}
-	
+
 	this.getModel = function() {
 		if(this.parameters['enableServo']) {
 			var model = union(
@@ -104,28 +105,45 @@ window.jscad.tspi.mechanics.stepperSG90 = function(printer, params) {
 
 		if(this.parameters['enableHorn']) {
 			if(this.parameters['horn'] > 0) {
-				var horn = difference(
-					cylinder({ d : 7, h : 4, center : true }).translate([0, 0, 2]),
-					cylinder({ d : 5, h : 2.5, center : true }).translate([0, 0, 2.75])
-				);
+				if(this.parameters['hornHoles']) {
+					var horn = difference(
+						cylinder({ d : 7, h : 4, center : true }).translate([0, 0, 2]),
+						cylinder({ d : 5, h : 2.5, center : true }).translate([0, 0, 2.75])
+					);
+				} else {
+					var horn = cylinder({ d : 7, h : 4, center : true }).translate([0, 0, 2]);
+				}
 
 				if((this.parameters['horn'] == 1) || (this.parameters['horn'] == 2)) {
-					var singleHornPart = difference(
-						union(
-							cube([ 19.5-3.5-2, 5.5, 1.5 ]).translate([0, -5.5/2, 0]),
-							cylinder({ d : 4, h : 1.5, center : true }).translate([14.0, 0, 0.75])
-						),
-						union(
-							cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, 0]),
-							cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, -1.5]).rotateX(180),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+0*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+1*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+2*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+3*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+4*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+5*2, 0, 1.5/2])
-						)
-					);
+					if(this.parameters['hornHoles']) {
+						var singleHornPart = difference(
+							union(
+								cube([ 19.5-3.5-2, 5.5, 1.5 ]).translate([0, -5.5/2, 0]),
+								cylinder({ d : 4, h : 1.5, center : true }).translate([14.0, 0, 0.75])
+							),
+							union(
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, 0]),
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, -1.5]).rotateX(180),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+0*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+1*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+2*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+3*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+4*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5.3+5*2, 0, 1.5/2])
+							)
+						);
+					} else {
+						var singleHornPart = difference(
+							union(
+								cube([ 19.5-3.5-2, 5.5, 1.5 ]).translate([0, -5.5/2, 0]),
+								cylinder({ d : 4, h : 1.5, center : true }).translate([14.0, 0, 0.75])
+							),
+							union(
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, 0]),
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, -1.5]).rotateX(180)
+							)
+						);
+					}
 					if(this.parameters['horn'] == 1) {
 						// Single ended
 						horn = union(
@@ -144,65 +162,103 @@ window.jscad.tspi.mechanics.stepperSG90 = function(printer, params) {
 
 				if(this.parameters['horn'] == 3) {
 					// Cross styled horn
-					var singleHornPart = difference(
-						union(
-							cube([ 19.5-3.5-2, 5.5, 1.5 ]).translate([0, -5.5/2, 0]),
-							cylinder({ d : 4, h : 1.5, center : true }).translate([14.0, 0, 0.75])
-						),
-						union(
-							cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, 0]),
-							cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, -1.5]).rotateX(180),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+0*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+1*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+2*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+3*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+4*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+5*2, 0, 1.5/2])
-						)
-					);
-					var otherHornPart = difference(
-						union(
-							cube([ 22-3.5-2, 7, 1.5 ]).translate([0, -7/2, 0]),
-							cylinder({ d : 4, h : 1.5, center : true }).translate([16.5, 0, 0.75])
-						),
-						union(
-							cube([ 23-3.5, 7, 1.5 ]).translate([0, -7/2, 0]).rotateZ(-atan(3 / (16.5+7))).translate([0, 7, 0]),
-							cube([ 23-3.5, 7, 1.5 ]).translate([0, -7/2, 0]).rotateZ(-atan(3 / (16.5+7))).translate([0, 7, -1.5]).rotateX(180),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+0*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+1*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+2*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+3*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+4*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+5*2, 0, 1.5/2]),
-							cylinder({ d : 1, h : 1.5, center: true }).translate([5+6*2, 0, 1.5/2])
-						)
-					);
-					
-					horn = union(
-						horn,
-						difference(
+					if(this.parameters['hornHoles']) {
+						var singleHornPart = difference(
+							union(
+								cube([ 19.5-3.5-2, 5.5, 1.5 ]).translate([0, -5.5/2, 0]),
+								cylinder({ d : 4, h : 1.5, center : true }).translate([14.0, 0, 0.75])
+							),
+							union(
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, 0]),
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, -1.5]).rotateX(180),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+0*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+1*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+2*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+3*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+4*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+5*2, 0, 1.5/2])
+							)
+						);
+						var otherHornPart = difference(
+							union(
+								cube([ 22-3.5-2, 7, 1.5 ]).translate([0, -7/2, 0]),
+								cylinder({ d : 4, h : 1.5, center : true }).translate([16.5, 0, 0.75])
+							),
+							union(
+								cube([ 23-3.5, 7, 1.5 ]).translate([0, -7/2, 0]).rotateZ(-atan(3 / (16.5+7))).translate([0, 7, 0]),
+								cube([ 23-3.5, 7, 1.5 ]).translate([0, -7/2, 0]).rotateZ(-atan(3 / (16.5+7))).translate([0, 7, -1.5]).rotateX(180),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+0*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+1*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+2*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+3*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+4*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+5*2, 0, 1.5/2]),
+								cylinder({ d : 1, h : 1.5, center: true }).translate([5+6*2, 0, 1.5/2])
+							)
+						);
+					} else {
+						var singleHornPart = difference(
+							union(
+								cube([ 19.5-3.5-2, 5.5, 1.5 ]).translate([0, -5.5/2, 0]),
+								cylinder({ d : 4, h : 1.5, center : true }).translate([14.0, 0, 0.75])
+							),
+							union(
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, 0]),
+								cube([ 19.5-3.5, 5.5, 1.5 ]).translate([0, -5.5/2, 0]).rotateZ(-atan(1.5 / (14+7))).translate([0, 5.5, -1.5]).rotateX(180)
+							)
+						);
+						var otherHornPart = difference(
+							union(
+								cube([ 22-3.5-2, 7, 1.5 ]).translate([0, -7/2, 0]),
+								cylinder({ d : 4, h : 1.5, center : true }).translate([16.5, 0, 0.75])
+							),
+							union(
+								cube([ 23-3.5, 7, 1.5 ]).translate([0, -7/2, 0]).rotateZ(-atan(3 / (16.5+7))).translate([0, 7, 0]),
+								cube([ 23-3.5, 7, 1.5 ]).translate([0, -7/2, 0]).rotateZ(-atan(3 / (16.5+7))).translate([0, 7, -1.5]).rotateX(180)
+							)
+						);
+					}
+
+					if(this.parameters['hornHoles']) {
+						horn = union(
+							horn,
+							difference(
+								union(
+									cube([ 4, 17-4, 1.5]).translate([ -2, -(17-4)/2, 0]),
+									cylinder({ d : 4, h : 1.5, center : true }).translate([0, 6.5, 1.5/2]),
+									cylinder({ d : 4, h : 1.5, center : true }).translate([0, -6.5, 1.5/2])
+								),
+								union(
+									cylinder({ d : 1, h : 1.5, center: true }).translate([0, 5+0*2, 1.5/2]),
+									cylinder({ d : 1, h : 1.5, center: true }).translate([0, 5+1*2, 1.5/2]),
+									cylinder({ d : 1, h : 1.5, center: true }).translate([0, -5-0*2, 1.5/2]),
+									cylinder({ d : 1, h : 1.5, center: true }).translate([0, -5-1*2, 1.5/2])
+								)
+							),
+							singleHornPart,
+							otherHornPart.rotateZ(180)
+						);
+					} else {
+						horn = union(
+							horn,
 							union(
 								cube([ 4, 17-4, 1.5]).translate([ -2, -(17-4)/2, 0]),
 								cylinder({ d : 4, h : 1.5, center : true }).translate([0, 6.5, 1.5/2]),
 								cylinder({ d : 4, h : 1.5, center : true }).translate([0, -6.5, 1.5/2])
 							),
-							union(
-								cylinder({ d : 1, h : 1.5, center: true }).translate([0, 5+0*2, 1.5/2]),
-								cylinder({ d : 1, h : 1.5, center: true }).translate([0, 5+1*2, 1.5/2]),
-								cylinder({ d : 1, h : 1.5, center: true }).translate([0, -5-0*2, 1.5/2]),
-								cylinder({ d : 1, h : 1.5, center: true }).translate([0, -5-1*2, 1.5/2])
-							)
-						),
-						singleHornPart,
-						otherHornPart.rotateZ(180)
+							singleHornPart,
+							otherHornPart.rotateZ(180)
+						);
+					}
+				}
+
+				if(this.parameters['hornHoles']) {
+					horn = difference(
+						horn,
+						cylinder({ d : 2.5, h : 4, center: true }).translate([0,0,2])
 					);
 				}
-				
-				horn = difference(
-					horn,
-					cylinder({ d : 2.5, h : 4, center: true }).translate([0,0,2])
-				);
-				
+
 				model = union(
 					model,
 					horn.rotateX(180).translate([6, 6, 31])
@@ -216,7 +272,7 @@ window.jscad.tspi.mechanics.stepperSG90 = function(printer, params) {
 
 		return model.scale(this.printer['scale']);
 	};
-	
+
 	this.getAxisOffsetX = function() {
 		return 6 * this.printer['scale'];
 	};
