@@ -59,36 +59,97 @@ if(typeof window.jscad.tspi.mechanics !== 'object') { window.jscad.tspi.mechanic
 if(typeof window.jscad.tspi.mechanics.bearings !== 'object') { window.jscad.tspi.mechanics.bearings = new Object(); }
 
 window.jscad.tspi.mechanics.bearings.LM8LUU = function(printer, params) {
-	let id = 8;
-	let od = 15;
-	let od1 = 14.3;
+	let knownParameters = [
+		{ name: 'hollow',						type: 'boolean',		default: true			},
+		{ name: 'grooves',						type: 'boolean',		default: true			},
+	];
 
-	let L = 45;
-	let w = 1.1;
-	let B = 35;
+	let knownPrinterParameters = [
+		{ name: 'scale', 						type: 'number', 	default: 1 			},
+		{ name: 'correctionInsideDiameter', 	type: 'number', 	default: 0 			},
+		{ name: 'correctionOutsideDiameter', 	type: 'number', 	default: 0 			},
+		{ name: 'resolutionCircle', 			type: 'number', 	default: 360		},
+	];
 
-	printer = printer || {};
+	this.parameters = { };
+	this.printer = { };
+	this.error = false;
 
-	let printerScale = (printer.scale || 1);
-	let printerCorrectionId = (printer.correctionInsideDiameter || 0);
-	let printerCorrectionOd = (printer.correctionOutsideDiameter || 0);
-	let fn = (printer.resolutionCircle || 32);
-
-	params = params || {};
-
-	let hollow = ((params && params.hollow) && true);
-	let grooves = ((params && params.grooves) && true);
-
-	let part = cylinder({ d : od+printerCorrectionOd, h : L, center : true, fn : fn });
-	if(hollow) {
-		part = difference(part, cylinder({ d : id-printerCorrectionId, h : L, center : true, fn : fn }));
+	for(var i = 0; i < knownParameters.length; i++) {
+		if(typeof(params[knownParameters[i].name]) === knownParameters[i].type) {
+			this.parameters[knownParameters[i].name] = params[knownParameters[i].name];
+		} else if(knownParameters[i].default != -1) {
+			this.parameters[knownParameters[i].name] = knownParameters[i].default;
+		} else {
+			this.error = true;
+		}
 	}
-	part = part.setColor([0.9,0.9,0.9]);
-	if(grooves) {
-		let groove = difference(cylinder({d : od+printerCorrectionOd, h : w, center : true, fn : fn}), cylinder({d : od1-printerCorrectionId, h : w, center : true, fn : fn}));
-		part = difference(part, groove.translate([0, 0, B/2-w/2]));
-		part = difference(part, groove.translate([0, 0, -B/2+w/2]));
+	for(i = 0; i < knownPrinterParameters.length; i++) {
+		if(typeof(printer[knownPrinterParameters[i].name]) === knownPrinterParameters[i].type) {
+			this.printer[knownPrinterParameters[i].name] = printer[knownPrinterParameters[i].name];
+		} else if(knownPrinterParameters[i].default != -1) {
+			this.printer[knownPrinterParameters[i].name] = knownPrinterParameters[i].default;
+		} else {
+			this.error = true;
+		}
 	}
 
-	return part.scale(printerScale);
-}
+	this.printer = printer;
+	this.params = params;
+
+	this.getModel = function() {
+		let id = 8;
+		let od = 15;
+		let od1 = 14.3;
+
+		let L = 45;
+		let w = 1.1;
+		let B = 35;
+
+		let printerScale = (this.printer['scale'] || 1);
+		let printerCorrectionId = (this.printer['correctionInsideDiameter'] || 0);
+		let printerCorrectionOd = (this.printer['correctionOutsideDiameter'] || 0);
+		let fn = (this.printer['resolutionCircle'] || 32);
+
+		let hollow = this.parameters['hollow'];
+		let grooves = this.parameters['grooves'];
+
+		let part = cylinder({ d : od+printerCorrectionOd, h : L, center : true, fn : fn });
+		if(hollow) {
+			part = difference(part, cylinder({ d : id-printerCorrectionId, h : L, center : true, fn : fn }));
+		}
+		part = part.setColor([0.9,0.9,0.9]);
+		if(grooves) {
+			let groove = difference(cylinder({d : od+printerCorrectionOd, h : w, center : true, fn : fn}), cylinder({d : od1-printerCorrectionId, h : w, center : true, fn : fn}));
+			part = difference(part, groove.translate([0, 0, B/2-w/2]));
+			part = difference(part, groove.translate([0, 0, -B/2+w/2]));
+		}
+
+		return part.scale(printerScale);
+	};
+
+	this.getTemplate = function() {
+		let id = 8;
+		let od = 15;
+		let od1 = 14.3;
+
+		let L = 45;
+		let w = 1.1;
+		let B = 35;
+
+		let printerScale = (this.printer['scale'] || 1);
+		let printerCorrectionId = (this.printer['correctionInsideDiameter'] || 0);
+		let printerCorrectionOd = (this.printer['correctionOutsideDiameter'] || 0);
+		let fn = (this.printer['resolutionCircle'] || 32);
+
+		let part = cylinder({ d : od+printerCorrectionOd, h : L, center : true, fn : fn });
+		part = part.setColor([0.9,0.9,0.9]);
+
+		return part.scale(printerScale);
+	};
+
+	this.getOutsideDiameter = function() { return 15; }
+	this.getLength = function() { return 45; }
+	this.getGrooveDepth = function() { return 1.1; }
+	this.getGrooveDistance = function() { return 35; }
+};
