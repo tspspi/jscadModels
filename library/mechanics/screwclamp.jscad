@@ -154,4 +154,70 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 
 		return objMount.scale(this.printer['scale']);
 	}
+
+	this.getOffsetBelowRod = function() {
+		return this.parameters['rodDiameter']/2 + this.parameters['minWallThickness'];
+	}
+
+	this.getClampThickness = function() {
+		let wireDiameter = this.parameters['rodDiameter'] || 2.4;
+		let metricNutDimension = this.parameters['m'] || 3;
+		let wireMountScrewLength = this.parameters['screwLength'] || 20;
+		let wireMountSlitWidth = (this.parameters['slitWidth'] == 0) ? Math.max((wireDiameter/2), 1) : this.parameters['slitWidth'];
+
+		let displayPrintedPartOnly = this.parameters['onlyPrintedPart'] || false;
+
+		let minWallSize = this.parameters['minWallThickness'] || 1;
+
+		let modelWireMountNut = new window.jscad.tspi.isoNut( printer, { m :  metricNutDimension });
+		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
+
+		let objWireMountNutFilled = union(modelWireMountNut.getModel(), cylinder({ d : modelWireMountNut.getThroughholeMedium(), h : modelWireMountNut.getHeight(), center : true, fn : this.printer['resolutionCircle'] }));
+		let objWireMountNut = modelWireMountNut.getModel();
+		let objWireMountScrew = modelWireMountScrew.getTemplate();
+
+		let fixtureBlockThickness = Math.max(
+			2*modelWireMountNut.getRadiusOutside()+(2*minWallSize),
+			modelWireMountScrew.dk+2, /* ToDo: Exchange with a to be implemented getRadiusOutside function that honors the inside diameter correction! */
+			modelWireMountScrew.throughhole_coarse/2 + modelWireMountNut.getRadiusOutside() + wireDiameter + (3*minWallSize)
+		);
+		let fixtureBlockHeight = Math.max(
+			2*modelWireMountNut.getRadiusOutside()+(2*minWallSize),
+			modelWireMountScrew.dk+(2*minWallSize)
+		);
+		let fixtureBlockLength = wireMountScrewLength + modelWireMountScrew.k;
+
+		return fixtureBlockHeight;
+	}
+
+	this.getClampSizeX = function() {
+		let wireDiameter = this.parameters['rodDiameter'] || 2.4;
+		let metricNutDimension = this.parameters['m'] || 3;
+		let wireMountScrewLength = this.parameters['screwLength'] || 20;
+		let wireMountSlitWidth = (this.parameters['slitWidth'] == 0) ? Math.max((wireDiameter/2), 1) : this.parameters['slitWidth'];
+
+		let displayPrintedPartOnly = this.parameters['onlyPrintedPart'] || false;
+
+		let minWallSize = this.parameters['minWallThickness'] || 1;
+
+		let modelWireMountNut = new window.jscad.tspi.isoNut( printer, { m :  metricNutDimension });
+		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
+
+		let objWireMountNutFilled = union(modelWireMountNut.getModel(), cylinder({ d : modelWireMountNut.getThroughholeMedium(), h : modelWireMountNut.getHeight(), center : true, fn : this.printer['resolutionCircle'] }));
+		let objWireMountNut = modelWireMountNut.getModel();
+		let objWireMountScrew = modelWireMountScrew.getTemplate();
+
+		let fixtureBlockThickness = Math.max(
+			2*modelWireMountNut.getRadiusOutside()+(2*minWallSize),
+			modelWireMountScrew.dk+2, /* ToDo: Exchange with a to be implemented getRadiusOutside function that honors the inside diameter correction! */
+			modelWireMountScrew.throughhole_coarse/2 + modelWireMountNut.getRadiusOutside() + wireDiameter + (3*minWallSize)
+		);
+		let fixtureBlockHeight = Math.max(
+			2*modelWireMountNut.getRadiusOutside()+(2*minWallSize),
+			modelWireMountScrew.dk+(2*minWallSize)
+		);
+		let fixtureBlockLength = wireMountScrewLength + modelWireMountScrew.k;
+
+		return fixtureBlockLength;
+	}
 }
