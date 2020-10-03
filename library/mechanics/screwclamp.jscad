@@ -73,6 +73,7 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 	this.parameters = { };
 	this.printer = { };
 	this.error = false;
+	this.rawPrinterObject = printer;
 
 	for(var i = 0; i < knownParameters.length; i++) {
 		if(typeof(params[knownParameters[i].name]) === knownParameters[i].type) {
@@ -103,8 +104,8 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 
 		let minWallSize = this.parameters['minWallThickness'] || 1;
 
-		let modelWireMountNut = new window.jscad.tspi.isoNut( printer, { m :  metricNutDimension });
-		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
+		let modelWireMountNut = new window.jscad.tspi.isoNut(this.rawPrinterObject, { m :  metricNutDimension });
+		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(this.rawPrinterObject, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
 
 		let objWireMountNutFilled = union(modelWireMountNut.getModel(), cylinder({ d : modelWireMountNut.getThroughholeMedium(), h : modelWireMountNut.getHeight(), center : true, fn : this.printer['resolutionCircle'] }));
 		let objWireMountNut = modelWireMountNut.getModel();
@@ -169,8 +170,8 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 
 		let minWallSize = this.parameters['minWallThickness'] || 1;
 
-		let modelWireMountNut = new window.jscad.tspi.isoNut( printer, { m :  metricNutDimension });
-		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
+		let modelWireMountNut = new window.jscad.tspi.isoNut(this.rawPrinterObject, { m :  metricNutDimension });
+		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(this.rawPrinterObject, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
 
 		let objWireMountNutFilled = union(modelWireMountNut.getModel(), cylinder({ d : modelWireMountNut.getThroughholeMedium(), h : modelWireMountNut.getHeight(), center : true, fn : this.printer['resolutionCircle'] }));
 		let objWireMountNut = modelWireMountNut.getModel();
@@ -200,8 +201,8 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 
 		let minWallSize = this.parameters['minWallThickness'] || 1;
 
-		let modelWireMountNut = new window.jscad.tspi.isoNut( printer, { m :  metricNutDimension });
-		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
+		let modelWireMountNut = new window.jscad.tspi.isoNut(this.rawPrinterObject, { m :  metricNutDimension });
+		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(this.rawPrinterObject, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
 
 		let objWireMountNutFilled = union(modelWireMountNut.getModel(), cylinder({ d : modelWireMountNut.getThroughholeMedium(), h : modelWireMountNut.getHeight(), center : true, fn : this.printer['resolutionCircle'] }));
 		let objWireMountNut = modelWireMountNut.getModel();
@@ -219,5 +220,36 @@ window.jscad.tspi.mechanics.basicScrewclamp = function(printer, params) {
 		let fixtureBlockLength = wireMountScrewLength + modelWireMountScrew.k;
 
 		return fixtureBlockLength;
+	}
+
+	this.getClampSizeY = function() {
+		let wireDiameter = this.parameters['rodDiameter'] || 2.4;
+		let metricNutDimension = this.parameters['m'] || 3;
+		let wireMountScrewLength = this.parameters['screwLength'] || 20;
+		let wireMountSlitWidth = (this.parameters['slitWidth'] == 0) ? Math.max((wireDiameter/2), 1) : this.parameters['slitWidth'];
+
+		let displayPrintedPartOnly = this.parameters['onlyPrintedPart'] || false;
+
+		let minWallSize = this.parameters['minWallThickness'] || 1;
+
+		let modelWireMountNut = new window.jscad.tspi.isoNut(this.rawPrinterObject, { m :  metricNutDimension });
+		let modelWireMountScrew = new window.jscad.tspi.iso4762Screw(this.rawPrinterObject, { m : metricNutDimension, l : wireMountScrewLength, throughhole : true });
+
+		let objWireMountNutFilled = union(modelWireMountNut.getModel(), cylinder({ d : modelWireMountNut.getThroughholeMedium(), h : modelWireMountNut.getHeight(), center : true, fn : this.printer['resolutionCircle'] }));
+		let objWireMountNut = modelWireMountNut.getModel();
+		let objWireMountScrew = modelWireMountScrew.getTemplate();
+
+		let fixtureBlockThickness = Math.max(
+			2*modelWireMountNut.getRadiusOutside()+(2*minWallSize),
+			modelWireMountScrew.dk+2, /* ToDo: Exchange with a to be implemented getRadiusOutside function that honors the inside diameter correction! */
+			modelWireMountScrew.throughhole_coarse/2 + modelWireMountNut.getRadiusOutside() + wireDiameter + (3*minWallSize)
+		);
+		let fixtureBlockHeight = Math.max(
+			2*modelWireMountNut.getRadiusOutside()+(2*minWallSize),
+			modelWireMountScrew.dk+(2*minWallSize)
+		);
+		let fixtureBlockLength = wireMountScrewLength + modelWireMountScrew.k;
+
+		return fixtureBlockThickness;
 	}
 }
