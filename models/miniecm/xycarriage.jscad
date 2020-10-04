@@ -10,10 +10,10 @@ if(typeof window.jscad.tspi.miniecm !== 'object') { window.jscad.tspi.miniecm = 
 
 window.jscad.tspi.miniecm.sledxy = function(printer, params) {
 	let knownParameters = [
+		{ name: 'sledCarriageType',				type: 'boolean',	default: false		},
+
 		{ name: 'guiderodClampM',				type: 'number',		default: 8			},
 		{ name: 'guiderodClampScrewLength',		type: 'number',		default: 40			},
-
-		// { name: 'guiderodDiameter',				type: 'number',		default: 8			},
 
 		{ name: 'guiderodClampMinWall',			type: 'number',		default: 2			},
 		{ name: 'minWallThickness',				type: 'number',		default: 1			},
@@ -69,8 +69,8 @@ window.jscad.tspi.miniecm.sledxy = function(printer, params) {
 
 	this.knownClamp = new window.jscad.tspi.mechanics.basicScrewclamp(printer, { m : this.parameters['guiderodClampM'], screwLength : this.parameters['guiderodClampScrewLength'], rodDiameter : this.parameters['guiderodDiameter'], onlyPrintedPart : this.parameters['onlyPrintedPart'], minWallThickness : this.parameters['guiderodClampMinWall']});
 	this.knownGrubNut = new window.jscad.tspi.isoNut(printer, { m : 3 });
-	this.knownGrubScrew = new window.jscad.tspi.iso4762Screw(printer, { m : 3, l : this.knownClamp.getClampSizeX()/2-this.bearing.getOutsideDiameter()/2 });
 	this.knownClampNut = new window.jscad.tspi.isoNut(printer, { m : this.parameters['guiderodClampM'] });
+	this.knownGrubScrew = new window.jscad.tspi.iso4762Screw(printer, { m : 3, l : this.knownClamp.getClampSizeX()/2-this.bearing.getOutsideDiameter()/2 });
 
 	this.requiredWallWidth = Math.max(this.knownClamp.getClampSizeX()/2 + Math.max(this.parameters['guiderodDiameter']/2, this.bearing.getOutsideDiameter()/2) + this.parameters['minWallThickness'], this.bearing.getLength());
 
@@ -93,13 +93,103 @@ window.jscad.tspi.miniecm.sledxy = function(printer, params) {
 
 	this.getModel = function() {
 		let sledSizeX = this.sledRealSizeX; // (this.bearing.getOutsideDiameter() + 2*this.parameters['minWallThickness']) * 2;
-		let sledSizeY = this.sledRealSizeY;
+		let sledSizeY = this.knownClamp.getClampSizeX();
 		let sledSizeZ =2 * this.knownClamp.getClampSizeY();
 
 		let axis2Height = this.knownClamp.getClampSizeY();
 
-		let sled = cube({ size : [ sledSizeX, sledSizeY, sledSizeZ ] });
+		let sled = {};
+		let nonprinted = {};
 
+		if(!this.parameters['sledCarriageType']) {
+			sled = cube({ size : [ sledSizeX, sledSizeY, sledSizeZ/2 ] }).translate([0,0,sledSizeZ/2]);
+			sled = union(
+				sled,
+				this.knownClamp.getModel().rotateX(90).translate([this.knownClamp.getClampSizeX()/2,this.knownClamp.getClampThickness(),this.knownClamp.getOffsetBelowRod()]),
+				this.knownClamp.getModel().rotateX(90).rotateZ(180).translate([-this.knownClamp.getClampSizeX()/2+sledSizeX,0,this.knownClamp.getOffsetBelowRod()])
+			);
+			sled = difference(
+				sled,
+				cylinder({ d : this.parameters['guiderodDiameter']+this.parameters['spacingThroughHole'], h : sledSizeX, center : true }).translate([-this.knownClamp.getClampSizeY()-this.knownClamp.getOffsetBelowRod()-this.parameters['guiderodDiameter']/2, this.knownClamp.getClampSizeX()/2, sledSizeX/2]).rotateY(90)
+			);
+
+			sled = difference(
+				sled,
+				union(
+					this.bearing.getTemplate().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([0,0,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+					this.bearing.getTemplate().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([sledSizeX-this.bearing.getLength(),0,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2])
+				)
+			);
+
+			let grubScrewOffset = (this.bearing.getLength() - this.bearing.getGrooveDistance() + this.bearing.getGrooveDepth())/2;
+			let grubScrewRealLen = this.knownGrubScrew.l + this.knownGrubScrew.k;
+			sled = difference(
+				sled,
+				union(
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset,grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2])
+				)
+			);
+
+			nonprinted = union(
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset,grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+
+				this.bearing.getModel().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([0,0,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+				this.bearing.getModel().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([sledSizeX-this.bearing.getLength(),0,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2])
+			);
+		} else {
+			sled = cube({ size : [ sledSizeX, sledSizeY, sledSizeZ/2 ] });
+			sled = union(
+				sled,
+				this.knownClamp.getModel().rotateX(90).translate([this.knownClamp.getClampSizeX()/2,this.knownClamp.getClampThickness(),this.knownClamp.getOffsetBelowRod()+this.knownClamp.getClampSizeY()]),
+				this.knownClamp.getModel().rotateX(90).rotateZ(180).translate([-this.knownClamp.getClampSizeX()/2+sledSizeX,0,this.knownClamp.getOffsetBelowRod()+this.knownClamp.getClampSizeY()])
+			);
+			sled = difference(
+				sled,
+				cylinder({ d : this.parameters['guiderodDiameter']+this.parameters['spacingThroughHole'], h : sledSizeX, center : true }).translate([-this.knownClamp.getOffsetBelowRod()-this.parameters['guiderodDiameter']/2, this.knownClamp.getClampSizeX()/2, sledSizeX/2]).rotateY(90)
+			);
+
+			sled = difference(
+				sled,
+				union(
+					this.bearing.getTemplate().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([0,0,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+					this.bearing.getTemplate().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([sledSizeX-this.bearing.getLength(),0,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2])
+				)
+			);
+
+			let grubScrewOffset = (this.bearing.getLength() - this.bearing.getGrooveDistance() + this.bearing.getGrooveDepth())/2;
+			let grubScrewRealLen = this.knownGrubScrew.l + this.knownGrubScrew.k;
+			sled = difference(
+				sled,
+				union(
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset,grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+					this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2])
+				)
+			);
+
+			nonprinted = union(
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset,grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+				this.knownGrubScrew.getTemplate().rotateX(90).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+
+				this.bearing.getModel().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([0,0,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
+				this.bearing.getModel().translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).rotateY(90).translate([sledSizeX-this.bearing.getLength(),0,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2])
+			);
+		}
+
+/*
 		// Cut areas required by bearings ... note that bearing can only be inserted from one side ...
 		sled = difference(
 			sled,
@@ -251,7 +341,10 @@ window.jscad.tspi.miniecm.sledxy = function(printer, params) {
 				this.knownGrubScrew.getTemplate().rotateY(90).translate([-this.knownGrubScrew.l-this.knownGrubScrew.k,0,0]).translate([sledSizeX, sledSizeY-(this.bearing.getLength() - grubScrewOffset), this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2+axis2Height])
 			);
 		}
-
+*/
+		if(!this.parameters['onlyPrintedPart']) {
+			sled = union(sled, nonprinted);
+		}
 		return sled;
 	}
 }
@@ -264,6 +357,7 @@ function getParameterDefinitions() {
 		{ name: 'sledSizeOutsideMin', type: 'float', initial: 0, caption: 'Minimum outside sled size' },
 		{ name: 'sledSizeWallMin', type: 'float', initial: 0, caption: 'Minimum wall size' },
 		{ name : 'sledBearingsLong', type : 'checkbox', checked : false, caption: 'Use long bearings' },
+		{ name : 'sledCarriageType', type : 'checkbox', checked : false, caption: 'Type A/B' },
 
 		{ name : 'grpDisplay', type : 'Group', caption : 'Display' },
 		{ name : 'onlyPrintedPart', type : 'checkbox', checked : false, caption: 'Show only printed part' },
