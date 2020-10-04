@@ -8,7 +8,7 @@ if(typeof window.jscad !== 'object') { window.jscad = new Object(); }
 if(typeof window.jscad.tspi !== 'object') { window.jscad.tspi = new Object(); }
 if(typeof window.jscad.tspi.miniecm !== 'object') { window.jscad.tspi.miniecm = new Object(); }
 
-window.jscad.tspi.miniecm.sledxy = function(printer, params) {
+window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 	let knownParameters = [
 		{ name: 'sledCarriageType',				type: 'boolean',	default: false		},
 
@@ -218,5 +218,5 @@ function getParameterDefinitions() {
 }
 
 function main(params) {
-	return (new window.jscad.tspi.miniecm.sledxy(params, params)).getModel();
+	return (new window.jscad.tspi.miniecm.carriagexy(params, params)).getModel();
 }
