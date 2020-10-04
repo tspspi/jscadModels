@@ -11,5 +11,6 @@ industrial machines using only off the shelf and 3D printed parts)
 * An rigid 2 axis (XY) positioning system:
   * The fixed part is done in ([bedxy.jscad](./bedxy.jscad); work in progress)
   * The moveable sled ([xysled.jscad](./xysled.jscad); work in progress)
+  * The carriage that connects the moveable sled to the fixed part ([xycarriage.jscad](./xycarriage.jscad); work in progress)
 * Different tool mounts
   * A simple wire mount for typical tungsten welding electrodes ([headwire.jscad](./headwire.jscad); work in progress)
