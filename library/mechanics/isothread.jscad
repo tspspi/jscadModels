@@ -154,6 +154,7 @@ window.jscad.tspi.iso4762Screw = function(printer, params) {
 		let throughholeDiameter = this.parameters['throughhole'] ? this.throughhole_medium : this.d;
 		let screwpartDiameter = this.parameters['corehole'] ? this.corehole : (this.parameters['throughhole'] ? this.throughhole_medium : this.d);
 		let fn = this.printer['resolutionCircle'];
+		let threadedLength = (this.l > this.b) ? this.b : this.l;
 
 		let tpl = cylinder({ d : this.dk+this.printer['correctionInsideDiameter'] , h : this.k, center : true, fn : fn }).translate([0,0,this.k/2 + this.l]);
 
@@ -166,7 +167,7 @@ window.jscad.tspi.iso4762Screw = function(printer, params) {
 		}
 		tpl = union(
 			tpl,
-			cylinder({ d : screwpartDiameter+this.printer['correctionInsideDiameter'], h : this.b, center : true, fn : fn }).translate([0,0,this.b/2])
+			cylinder({ d : screwpartDiameter+this.printer['correctionInsideDiameter'], h : threadedLength, center : true, fn : fn }).translate([0,0,threadedLength/2])
 		);
 
 		return tpl.scale(this.printer['scale']).setColor([0.8, 0.8, 0.8]);
