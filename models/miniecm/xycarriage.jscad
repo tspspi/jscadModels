@@ -207,10 +207,10 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 			sled = difference(
 				sled,
 				union(
-					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + grubScrewNutCutDepth]),
-					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + grubScrewNutCutDepth]),
-					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + grubScrewNutCutDepth]),
-					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + grubScrewNutCutDepth])
+					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2]),
+					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2]),
+					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2]),
+					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2])
 				)
 			);
 
@@ -255,5 +255,5 @@ function getParameterDefinitions() {
 }
 
 function main(params) {
-	return (new window.jscad.tspi.miniecm.carriagexy(params, params)).getModel();
+	return (new window.jscad.tspi.miniecm.carriagexy(params, params)).getModel().rotateZ(90).scale([1.01083032491, 1.00214745884, 1]);
 }
