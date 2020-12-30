@@ -46,7 +46,7 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 		{ name: 'toolmountScrewM',				type: 'number',		default: 6			},
 		{ name: 'toolmountScrewLength',			type: 'number',		default: 16			},
 
-		{ name: 'zDistance',					type: 'number',		default: 40			},
+		{ name: 'zDistance',					type: 'number',		default: 60			},
 		{ name: 'zTowerLayerHeight',			type: 'number',		default: 5			},
 		{ name: 'zTowerWidthOutsideMin',		type: 'number',		default: 0			},
 		{ name: 'zTowerDepthOutsideMin',		type: 'number',		default: 0			},
@@ -99,13 +99,13 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 	this.ballbearingAxial = difference(cylinder({d : this.parameters['leadscrewBearingOD'], h : this.parameters['leadscrewBearingH'], center : true}), cylinder({d : this.parameters['leadscrewDiameter'], h : this.parameters['leadscrewBearingH'], center : true})).translate([0,0,this.parameters['leadscrewBearingH']/2]).setColor([1,0,0]);
 
 	let zHeight = 2 * this.parameters['zDistance'];
-	this.zTowerHeight_MotorPosition = this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) + this.parameters['stepperCouplerH'] + 2 + this.parameters['zTowerLayerHeight'];
-	this.zTowerHeight_Level3Position = this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) + this.parameters['stepperCouplerH'] + 2;
-	this.zTowerHeight_CouplerPosition = this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) + 1;
+	this.zTowerHeight_MotorPosition =        this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) + this.parameters['stepperCouplerH'] + 2 + this.parameters['zTowerLayerHeight'];
+	this.zTowerHeight_Level3Position =       this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) + this.parameters['stepperCouplerH'] + 2;
+	this.zTowerHeight_CouplerPosition =      this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) + 1;
 	this.zTowerHeight_UpperBearingPosition = this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight + Math.max(3 + this.parameters['leadscrewBearingH'], this.parameters['zTowerLayerHeight']) - this.parameters['leadscrewBearingH'];
-	this.zTowerHeight_Level2Position = this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight;
+	this.zTowerHeight_Level2Position =       this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] + zHeight;
 	this.zTowerHeight_LowerBearingPosition = this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'];
-	this.zTowerHeight_LowerBallPosition = this.parameters['zTowerLayerHeight'];
+	this.zTowerHeight_LowerBallPosition =    this.parameters['zTowerLayerHeight'];
 
 	this.leadscrewLength = (this.zTowerHeight_CouplerPosition - this.zTowerHeight_LowerBearingPosition) + (this.parameters['stepperCouplerH'] / 2);
 
@@ -119,15 +119,15 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 
 	this.getModel = function() {
 		let nonPrintable = union(
-			this.stepper.getModel().rotateX(180).translate([0,0,this.zTowerHeight_MotorPosition]),
+			this.stepper.getModel().rotateX(180).scale(this.printer['lm8uuInsertDiameterScale']).translate([0,0,this.zTowerHeight_MotorPosition]),
 			cylinder({ d : this.parameters['stepperCouplerD'], h : this.parameters['stepperCouplerH'], center : true }).translate([0,0,this.zTowerHeight_CouplerPosition + this.parameters['stepperCouplerH']/2]).setColor([0,1,0]),
 			cylinder({ d : this.parameters['leadscrewDiameter']+2, h : this.leadscrewLength, center : true}).translate([0,0,this.leadscrewLength/2 + this.zTowerHeight_LowerBearingPosition]).setColor([0,1,0]),
-			this.ballbearingAxial.translate([0,0,this.zTowerHeight_UpperBearingPosition]),
-			this.ballbearingAxial.translate([0,0,this.zTowerHeight_LowerBearingPosition]),
+			this.ballbearingAxial.scale(this.printer['lm8uuInsertDiameterScale']).translate([0,0,this.zTowerHeight_UpperBearingPosition]),
+			this.ballbearingAxial.scale(this.printer['lm8uuInsertDiameterScale']).translate([0,0,this.zTowerHeight_LowerBearingPosition]),
 			sphere({ r : this.parameters['lowerBallDiameter']/2, center : true }).translate([0,0,this.parameters['lowerBallDiameter']/2+this.zTowerHeight_LowerBallPosition]).setColor([1,0,0]),
 
-			cylinder({ d : this.parameters['guiderodDiameter'], h : this.zTowerHeight_MotorPosition-this.parameters['guiderodClampMinWall'], center : true }).translate([0,(this.towerOutsideWidth/2)-this.guiderodClamp.getOffsetBelowRod(),this.zTowerHeight_MotorPosition/2 + this.parameters['guiderodClampMinWall']]).setColor([1,0,0]),
-			cylinder({ d : this.parameters['guiderodDiameter'], h : this.zTowerHeight_MotorPosition-this.parameters['guiderodClampMinWall'], center : true }).translate([0,-(this.towerOutsideWidth/2)+this.guiderodClamp.getOffsetBelowRod(),this.zTowerHeight_MotorPosition/2 + this.parameters['guiderodClampMinWall']]).setColor([1,0,0]),
+			cylinder({ d : this.parameters['guiderodDiameter']+0.5, h : this.zTowerHeight_MotorPosition-this.parameters['guiderodClampMinWall'], center : true, fn: this.printer['resolutionCircle'] }).translate([0,(this.towerOutsideWidth/2)-this.guiderodClamp.getOffsetBelowRod(),this.zTowerHeight_MotorPosition/2 + this.parameters['guiderodClampMinWall']]).setColor([1,0,0]),
+			cylinder({ d : this.parameters['guiderodDiameter']+0.5, h : this.zTowerHeight_MotorPosition-this.parameters['guiderodClampMinWall'], center : true, fn: this.printer['resolutionCircle'] }).translate([0,-(this.towerOutsideWidth/2)+this.guiderodClamp.getOffsetBelowRod(),this.zTowerHeight_MotorPosition/2 + this.parameters['guiderodClampMinWall']]).setColor([1,0,0]),
 
 			this.stepperMountScrew.getTemplate().rotateX(180).translate([15.5, 15.5, this.zTowerHeight_Level3Position+this.stepperMountScrew.l]),
 			this.stepperMountScrew.getTemplate().rotateX(180).translate([15.5, -15.5, this.zTowerHeight_Level3Position+this.stepperMountScrew.l]),
@@ -176,25 +176,27 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 		);
 
 		/* Add sacrificial bridges */
-		/*
+
 		printables = union(
-			printables,
-			cube({ size : [this.towerOutsideDepth, 2*insideSizeHalf, this.parameters['sacrificialBridgeSize']], center : true }).translate([0,0,this.parameters['sacrificialBridgeSize']/2 + this.zTowerHeight_Level3Position]).setColor([0,0,0]),
-			cube({ size : [this.towerOutsideDepth-middleCutFront, 2*insideSizeHalf, this.parameters['sacrificialBridgeSize']], center : true }).translate([middleCutFront/2,0,this.parameters['sacrificialBridgeSize']/2 + this.zTowerHeight_Level2Position]).setColor([0,0,0])
+			 printables,
+			 cube({ size : [this.towerOutsideDepth, 2*insideSizeHalf, this.parameters['sacrificialBridgeSize']], center : true }).translate([0,0,this.parameters['sacrificialBridgeSize']/2 + this.zTowerHeight_Level3Position]).setColor([0,0,0]),
+			 cube({ size : [this.towerOutsideDepth-middleCutFront, 2*insideSizeHalf, this.parameters['sacrificialBridgeSize']], center : true }).translate([middleCutFront/2,0,this.parameters['sacrificialBridgeSize']/2 + this.zTowerHeight_Level2Position]).setColor([0,0,0])
 		);
-		*/
 
 		// Holes for inductive / capacitive sensors
 		printables = difference(
 			union(
 				printables,
 				cube({ size : [this.towerOutsideDepth+wallwidth, 1, 20], center : true}).translate([wallwidth/2, insideSizeHalf+wallwidth+1/2+5, this.zTowerHeight_Level2Position-this.parameters['zTowerLayerHeight']-20/2]),
-				cube({ size : [5, 5, 20], center : true}).translate([-this.towerOutsideDepth/2+5/2, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_Level2Position-this.parameters['zTowerLayerHeight']-20/2]),
-				cube({ size : [5, 5, 20], center : true}).translate([this.towerOutsideDepth/2-5/2+wallwidth, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_Level2Position-this.parameters['zTowerLayerHeight']-20/2]),
+				// cube({ size : [5, 5, 20], center : true}).translate([-this.towerOutsideDepth/2+5/2, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_Level2Position-this.parameters['zTowerLayerHeight']-20/2]),
+				// cube({ size : [5, 5, 20], center : true}).translate([this.towerOutsideDepth/2-5/2+wallwidth, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_Level2Position-this.parameters['zTowerLayerHeight']-20/2]),
 
 				cube({ size : [this.towerOutsideDepth+wallwidth, 1, 20], center : true}).translate([wallwidth/2, insideSizeHalf+wallwidth+1/2+5, this.zTowerHeight_LowerBearingPosition+this.parameters['leadscrewBearingH']+20/2]),
-				cube({ size : [5, 5, 20], center : true}).translate([-this.towerOutsideDepth/2+5/2, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_LowerBearingPosition+this.parameters['leadscrewBearingH']+20/2]),
-				cube({ size : [5, 5, 20], center : true}).translate([this.towerOutsideDepth/2-5/2+wallwidth, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_LowerBearingPosition+this.parameters['leadscrewBearingH']+20/2])
+				// cube({ size : [5, 5, 20], center : true}).translate([-this.towerOutsideDepth/2+5/2, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_LowerBearingPosition+this.parameters['leadscrewBearingH']+20/2]),
+				// cube({ size : [5, 5, 20], center : true}).translate([this.towerOutsideDepth/2-5/2+wallwidth, insideSizeHalf+wallwidth+5/2, this.zTowerHeight_LowerBearingPosition+this.parameters['leadscrewBearingH']+20/2])
+
+				cube({ size : [5, 5+1, this.zTowerHeight_MotorPosition], center : true}).translate([-this.towerOutsideDepth/2+5/2, insideSizeHalf+wallwidth+5/2+0.5, this.zTowerHeight_MotorPosition/2]),
+				cube({ size : [5, 5+1, this.zTowerHeight_MotorPosition], center : true}).translate([this.towerOutsideDepth/2-5/2+wallwidth, insideSizeHalf+wallwidth+5/2+0.5, this.zTowerHeight_MotorPosition/2])
 			),
 			union(
 				cylinder({ d : 13, h : wallwidth, center : true}).rotateX(90).translate([0, insideSizeHalf+wallwidth/2, this.zTowerHeight_Level2Position-this.parameters['zTowerLayerHeight']-20/2]),
