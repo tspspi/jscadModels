@@ -6,8 +6,10 @@ and libraries.
 ## Installation
 
 Note that the libraries are usually expected to be deployed on an server that
-hosts an OpenJSCAD instance. On my setups I simply deploy the content of
-the ```library``` folder to the ```/openjscad.jscad/```.
+hosts an OpenJSCAD instance. On [my setups](https://jscad.tspi.at) I simply deploy
+the content of the ```library``` folder to the ```/openjscad.jscad/```. In this
+case any library can be used by simply using an ```include``` directive at the
+top of the model script.
 
 ## Libraries
 
