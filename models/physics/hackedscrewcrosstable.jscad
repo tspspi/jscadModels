@@ -224,7 +224,7 @@ function screwCrossTable(printer, params) {
 
 		return union(
 			innerTable,
-			innerFrame,
+			difference(innerFrame, union(guiderod3, guiderod4)),
 			outerFrame,
 			union(nonPrintables).setColor([0,1,0])
 		).scale(this.printer.scale);
