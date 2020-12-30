@@ -53,8 +53,8 @@ function getParameterDefinitions() {
 		{ name: 'minWallWidth', type: 'float', caption: 'Minimum wall width', default: 2 },
 
 		{ name: 'grpTable', type: 'group', caption: 'Table settings' },
-		{ name: 'tableInsideX', type: 'float', caption: 'Table inside width', default: 10 },
-		{ name: 'tableInsideY', type: 'float', caption: 'Table inside depth', default: 10 },
+		{ name: 'tableInsideX', type: 'float', caption: 'Table inside width', default: 20 },
+		{ name: 'tableInsideY', type: 'float', caption: 'Table inside depth', default: 20 },
 		{ name: 'tableInsideZ', type: 'float', caption: 'Table inside thickness', default: 10 },
 
 		{ name: 'grpAxisX', type: 'group', caption: 'First axis (inner axis)' },
