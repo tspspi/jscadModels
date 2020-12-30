@@ -4,10 +4,6 @@
 	Note that this really was just a quick hack (maybe I'll do a clean model
 	soon) since I required an hacked adjustable tungsten filament holder for an
 	electron source for which I'd only print the two outer frames.
-
-	If you think this code was useful BTC
-	contributions are welcome at
-	19sKN38N4yxWZXoZeAdXZb5rq9xk32aDP4
 */
 
 /*
