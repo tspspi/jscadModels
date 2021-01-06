@@ -439,16 +439,37 @@ window.jscad.tspi.miniecm.tool.wiretool01 = function(printer, params) {
 	}
 }
 
-function main(params) {
-/*	let tool01 = new window.jscad.tspi.miniecm.tool.wiretool01({}, {});
-	return tool01.getModel(); */
-	let tower = new window.jscad.tspi.miniecm.tool.ztower01({}, {onlyPrintedPart : true});
-	let tool = new window.jscad.tspi.miniecm.tool.wiretool01({}, {partToolholder01A : true, partToolholder01B : false, onlyPrintedPart : true});
+function getParameterDefinitions() {
+    return [
+		{ name : 'grpTower', type : 'Group', caption : 'Tower' },
+		{ name : 'zDistance', type : 'float', initial : 60, caption : 'Z travel distance' },
 
-	/* return union(
-	    tool.getModel().translate([0,0,5]),
-	    tower.getModel()
-	);
-	return tool.getModel(); */
-	return tower.getModel();
+		{ name : 'grpTool', type : 'Group', caption : 'Tool' },
+		{ name : 'toolHeight', type : 'float', initial : 50, caption : 'Tool holder height' },
+
+		{ name : 'grpDisplay', type : 'Group', caption : 'Display' },
+		{ name : 'showTower', type : 'checkbox', checked : true, caption: 'Show tower' },
+		{ name : 'partToolholder01B', type : 'checkbox', checked : true, caption: 'Show sled' },
+		{ name : 'partToolholder01A', type : 'checkbox', checked : true, caption: 'Show toolholder' },
+		{ name : 'onlyPrintedPart', type : 'checkbox', checked : false, caption: 'Show only printed part' },
+
+		{ name : 'renderedZPositionTool', type : 'float', initial : 50, caption: 'Displayed z position of sled' },
+
+		{ name : 'grpPrinter', type : 'Group', caption : 'Printer' },
+        { name: 'resolutionCircle', type: 'float', initial: 32, caption: 'Circle resolution', min : 32 },
+		{ name: 'scale', type : 'float', initial : 1, caption : 'Scale' },
+		{ name: 'correctionInsideDiameter', type : 'float', initial : 0, caption : 'Inside diameter correction' },
+		{ name: 'correctionOutsideDiameter', type : 'float', initial : 0, caption : 'Outside diameter correction' }
+    ];
+}
+
+function main(params) {
+	let tower = new window.jscad.tspi.miniecm.tool.ztower01(params, params);
+	let tool = new window.jscad.tspi.miniecm.tool.wiretool01(params, params);
+
+	let parts = [];
+	if(params['showTower']) { parts.push(tower.getModel()); }
+	if(params['partToolholder01A'] || params['partToolholder01B']) { parts.push(tool.getModel().translate([0,0,params['renderedZPositionTool']])); }
+
+	return union(parts);
 }
