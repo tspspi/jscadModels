@@ -46,4 +46,6 @@ top of the model script.
 * 3D printer accessory
   * Holder for [3D printer spools](./models/printer3d/filament/)
 * Toy components
+* [Physics](./models/physics/)
+  * Hacked screw based [mini cross table](./models/physics/hackedscrewcrosstable.jscad)
 * A small [MiniECM project](./models/miniecm/)

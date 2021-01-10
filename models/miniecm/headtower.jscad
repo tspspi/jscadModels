@@ -165,7 +165,7 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 				cylinder({ d : 12, h : this.parameters['zTowerLayerHeight'], center : true}).translate([0,0,this.parameters['zTowerLayerHeight']/2 + this.zTowerHeight_Level3Position])
 			)
 		);
-
+/*
 		let mountplateThickness = this.parameters['zTowerLayerHeight'];
 		let mountplate = difference(
 			cube({ size : [this.towerOutsideDepth, 2*insideSizeHalf, mountplateThickness], center : true}).translate([0,0,-mountplateThickness/2]),
@@ -174,7 +174,7 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 				this.towerMountScrew.getTemplate().translate([0, -(((this.towerOutsideWidth/2)-this.guiderodClamp.getOffsetBelowRod() - this.parameters['guiderodDiameter'] - this.parameters['leadscrewBearingOD']/2)/2 +  this.parameters['leadscrewBearingOD']/2), this.zTowerHeight_LowerBearingPosition + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k])
 			)
 		);
-
+*/
 		/* Add sacrificial bridges */
 
 		printables = union(
@@ -222,13 +222,24 @@ window.jscad.tspi.miniecm.tool.ztower01 = function(printer, params) {
 	this.getDimensionXReal = function() {
 		let wallwidth = this.parameters['zTowerLayerHeight'];
 		let insideSizeHalf = ((this.towerOutsideWidth/2)-this.guiderodClamp.getOffsetBelowRod() + this.linearBearing.getOutsideDiameter()/2 + this.parameters['guiderodClampMinWall'] + 1);
-		return 2*insideSizeHalf+2*wallwidth;
+		return 2*insideSizeHalf+2*wallwidth+5+1;
 	}
 	this.getDimensionYReal = function() {
 		let wallwidth = this.parameters['zTowerLayerHeight'];
 		let insideSizeHalf = ((this.towerOutsideWidth/2)-this.guiderodClamp.getOffsetBelowRod() + this.linearBearing.getOutsideDiameter()/2 + this.parameters['guiderodClampMinWall'] + 1);
-		return this.towerOutsideDepth+2*wallwidth;
+		return this.towerOutsideDepth+1*wallwidth;
 	}
+
+	this.getDimensionXRealAsymmetry = function() {
+		return 3;
+	}
+	this.getDimensionYRealAsymmetry = function() {
+		return this.parameters['zTowerLayerHeight'] / 2;
+	}
+
+	this.getBedMountScrewOffsetY = function() {
+		return ((this.towerOutsideWidth/2)-this.guiderodClamp.getOffsetBelowRod() - this.parameters['guiderodDiameter'] - this.parameters['leadscrewBearingOD']/2)/2 +  this.parameters['leadscrewBearingOD']/2;
+	};
 }
 
 window.jscad.tspi.miniecm.leadscrewnutT8 = function(printer, params) {
@@ -439,16 +450,178 @@ window.jscad.tspi.miniecm.tool.wiretool01 = function(printer, params) {
 	}
 }
 
-function main(params) {
-/*	let tool01 = new window.jscad.tspi.miniecm.tool.wiretool01({}, {});
-	return tool01.getModel(); */
-	let tower = new window.jscad.tspi.miniecm.tool.ztower01({}, {onlyPrintedPart : true});
-	let tool = new window.jscad.tspi.miniecm.tool.wiretool01({}, {partToolholder01A : true, partToolholder01B : false, onlyPrintedPart : true});
+window.jscad.tspi.miniecm.tool.mountplate = function(printer, params) {
+	let knownParameters = [
+		{ name: 'wireclampScrewM',				type: 'number',		default: 3			},
+		{ name: 'wireclampScrewLength',			type: 'number',		default: 6			},
+		{ name: 'wireclampWireDiameter',		type: 'number',		default: 2.4		},
+		{ name: 'wireclampExtendsBottom',		type: 'number',		default: 10			},
+		{ name: 'wireclampWireLength',			type: 'number',		default: 175		},
 
-	/* return union(
-	    tool.getModel().translate([0,0,5]),
-	    tower.getModel()
-	);
-	return tool.getModel(); */
-	return tower.getModel();
+		{ name: 'toolHeight',					type: 'number',		default: 50			},
+
+		{ name: 'onlyPrintedPart',				type: 'boolean',	default: false		},
+
+		{ name: 'wireclampSlitWidth',			type: 'number',		default: 0			},
+		{ name: 'wireclampMinWallThickness',	type: 'number',		default: 1			},
+
+		{ name: 'guiderodClampM',				type: 'number',		default: 6			},
+		{ name: 'guiderodClampScrewLength',		type: 'number',		default: 16			},
+		{ name: 'lm8uuGrubScrewM',				type: 'number',		default: 3			},
+		{ name: 'lm8uuGrubScrewLength',			type: 'number',		default: 6			},
+		{ name: 'guiderodClampMinWall',			type: 'number',		default: 2			},
+		{ name: 'minWallThickness',				type: 'number',		default: 1			},
+
+		{ name: 'bedmountScrewM',				type: 'number',		default: 6			},
+		{ name: 'bedmountScrewLength',			type: 'number',		default: 16			},
+
+		{ name: 'leadscrewDiameter',			type: 'number',		default: 8			},
+		{ name: 'leadscrewBearingOD',			type: 'number',		default: 22			},
+		{ name: 'leadscrewBearingH',			type: 'number',		default: 7			},
+		{ name: 'stepperZLength',				type: 'number',		default: 30			},
+		{ name: 'stepperCouplerH',				type: 'number',		default: 25			},
+		{ name: 'stepperCouplerD',				type: 'number',		default: 19			},
+		{ name: 'lowerBallDiameter',			type: 'number',		default: 3			},
+
+		{ name: 'toolmountScrewM',				type: 'number',		default: 6			},
+		{ name: 'toolmountScrewLength',			type: 'number',		default: 16			},
+
+		{ name: 'zDistance',					type: 'number',		default: 60			},
+		{ name: 'zTowerLayerHeight',			type: 'number',		default: 5			},
+		{ name: 'zTowerWidthOutsideMin',		type: 'number',		default: 0			},
+		{ name: 'zTowerDepthOutsideMin',		type: 'number',		default: 0			},
+
+		{ name: 'sacrificialBridgeSize',		type: 'number',		default: 0.14		},
+
+		{ name: 'displayMountPlate',			type: 'boolean',	default: false		},
+	];
+
+	let knownPrinterParameters = [
+		{ name: 'scale', 						type: 'number', 	default: 1 			},
+		{ name: 'correctionInsideDiameter', 	type: 'number', 	default: 0 			},
+		{ name: 'correctionOutsideDiameter', 	type: 'number', 	default: 0 			},
+		{ name: 'resolutionCircle', 			type: 'number', 	default: 360 		},
+		{ name: 'guiderodClampDiaCorrection',	type: 'number',		default: 0.1		},
+		{ name: 'lm8uuInsertDiameterScale',		type: 'number',		default: 1.05		},
+	];
+
+	this.rawprinter = printer;
+	this.parameters = { };
+	this.printer = { };
+	this.error = false;
+
+	for(var i = 0; i < knownParameters.length; i++) {
+		if(typeof(params[knownParameters[i].name]) === knownParameters[i].type) {
+			this.parameters[knownParameters[i].name] = params[knownParameters[i].name];
+		} else if(knownParameters[i].default != -1) {
+			this.parameters[knownParameters[i].name] = knownParameters[i].default;
+		} else {
+			this.error = true;
+		}
+	}
+	for(i = 0; i < knownPrinterParameters.length; i++) {
+		if(typeof(printer[knownPrinterParameters[i].name]) === knownPrinterParameters[i].type) {
+			this.printer[knownPrinterParameters[i].name] = printer[knownPrinterParameters[i].name];
+		} else if(knownPrinterParameters[i].default != -1) {
+			this.printer[knownPrinterParameters[i].name] = knownPrinterParameters[i].default;
+		} else {
+			this.error = true;
+		}
+	}
+
+	this.rawprinter = printer;
+
+	let tower = new window.jscad.tspi.miniecm.tool.ztower01(params, params);
+
+	/*
+		this.stepperMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : 3, l : 25 });
+		this.towerMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : this.parameters['bedmountScrewM'], l : this.parameters['bedmountScrewLength'] });
+	*/
+	this.toolmountNut = new window.jscad.tspi.isoNut(printer, { m : this.parameters['bedmountScrewM'] });
+	this.towerMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : this.parameters['bedmountScrewM'], l : this.parameters['bedmountScrewLength'] });
+
+	let screwPenetrationLength = - (this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k);
+	let mountplateOverlap = 5;
+	let mountplateThickness = screwPenetrationLength + mountplateOverlap;
+	let mountscrewWallThickness = screwPenetrationLength - this.toolmountNut.getHeight();
+
+	this.tower = tower;
+
+	this.getModel = function() {
+		let mountplate = difference(
+			cube({ size : [this.tower.getDimensionYReal()+10, this.tower.getDimensionXReal()+10, mountplateThickness], center : true}).translate([this.tower.getDimensionYRealAsymmetry(), this.tower.getDimensionXRealAsymmetry(), -mountplateThickness/2 + mountplateOverlap]),
+			tower.getModel().scale(1.01)
+		);
+		mountplate = difference(
+			mountplate,
+			this.toolmountNut.getModel().translate([0, tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)])
+		);
+		mountplate = difference(
+			mountplate,
+			this.toolmountNut.getModel().translate([0, -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)])
+		);
+
+		// Cut slits to insert nuts from the side ...
+		mountplate = difference(
+			mountplate,
+			cube({ size : [(this.tower.getDimensionYReal()+10)/2, this.toolmountNut.getRadiusInside(), this.toolmountNut.getHeight()], center : true }).translate([(this.tower.getDimensionYReal()+10)/4+this.tower.getDimensionYRealAsymmetry(), -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)]),
+			cube({ size : [(this.tower.getDimensionYReal()+10)/2, this.toolmountNut.getRadiusInside(), this.toolmountNut.getHeight()], center : true }).translate([(this.tower.getDimensionYReal()+10)/4+this.tower.getDimensionYRealAsymmetry(),  tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)])
+		);
+
+		// Add a sacrificial bridge immediatly on top of the nut
+		mountplate = union(
+			mountplate,
+			cube({ size : [this.tower.getDimensionYReal()+10, this.tower.getDimensionXReal()+10, this.parameters['sacrificialBridgeSize']] , center : true }).translate([this.tower.getDimensionYRealAsymmetry(), this.tower.getDimensionXRealAsymmetry(),-mountscrewWallThickness + this.parameters['sacrificialBridgeSize']/2]).setColor([0,0,0])
+		)
+
+		return union(
+			mountplate
+			// this.towerMountScrew.getTemplate().translate([0,0,(this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k) + screwPenetrationLength])
+			// this.towerMountScrew.getTemplate().translate([0,tower.getBedMountScrewOffsetY(),(this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k)]),
+			// this.towerMountScrew.getTemplate().translate([0,-tower.getBedMountScrewOffsetY(),(this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k)])
+		);
+	}
+
+	this.getMountplateLowerZPosition = function() {
+		let screwPenetrationLength = - (this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k);
+		return -screwPenetrationLength;
+	}
+}
+
+function getParameterDefinitions() {
+    return [
+		{ name : 'grpTower', type : 'Group', caption : 'Tower' },
+		{ name : 'zDistance', type : 'float', initial : 60, caption : 'Z travel distance' },
+
+		{ name : 'grpTool', type : 'Group', caption : 'Tool' },
+		{ name : 'toolHeight', type : 'float', initial : 50, caption : 'Tool holder height' },
+
+		{ name : 'grpDisplay', type : 'Group', caption : 'Display' },
+		{ name : 'showTower', type : 'checkbox', checked : true, caption: 'Show tower' },
+		{ name : 'partToolholder01B', type : 'checkbox', checked : true, caption: 'Show sled' },
+		{ name : 'partToolholder01A', type : 'checkbox', checked : true, caption: 'Show toolholder' },
+		{ name : 'onlyPrintedPart', type : 'checkbox', checked : false, caption: 'Show only printed part' },
+
+		{ name : 'renderedZPositionTool', type : 'float', initial : 50, caption: 'Displayed z position of sled' },
+
+		{ name : 'grpPrinter', type : 'Group', caption : 'Printer' },
+        { name: 'resolutionCircle', type: 'float', initial: 32, caption: 'Circle resolution', min : 32 },
+		{ name: 'scale', type : 'float', initial : 1, caption : 'Scale' },
+		{ name: 'correctionInsideDiameter', type : 'float', initial : 0, caption : 'Inside diameter correction' },
+		{ name: 'correctionOutsideDiameter', type : 'float', initial : 0, caption : 'Outside diameter correction' }
+    ];
+}
+
+function main(params) {
+	let tower = new window.jscad.tspi.miniecm.tool.ztower01(params, params);
+	let tool = new window.jscad.tspi.miniecm.tool.wiretool01(params, params);
+
+	let parts = [];
+	if(params['showTower']) { parts.push(tower.getModel()); }
+	if(params['partToolholder01A'] || params['partToolholder01B']) { parts.push(tool.getModel().translate([0,0,params['renderedZPositionTool']])); }
+
+	// let mountplate = new window.jscad.tspi.miniecm.tool.mountplate(params, params);
+	// parts.push( mountplate.getModel().translate([0,0,-mountplate.getMountplateLowerZPosition()]) );
+
+	return union(parts);
 }
