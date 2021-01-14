@@ -539,11 +539,12 @@ window.jscad.tspi.miniecm.tool.mountplate = function(printer, params) {
 	*/
 	this.toolmountNut = new window.jscad.tspi.isoNut(printer, { m : this.parameters['bedmountScrewM'] });
 	this.towerMountScrew = new window.jscad.tspi.iso4762Screw(printer, { m : this.parameters['bedmountScrewM'], l : this.parameters['bedmountScrewLength'] });
+	let towerMountScrewScaleZ = 1.2;
 
 	let screwPenetrationLength = - (this.parameters['zTowerLayerHeight'] + this.parameters['lowerBallDiameter'] + this.parameters['leadscrewBearingH'] - this.towerMountScrew.l - this.towerMountScrew.k);
 	let mountplateOverlap = 5;
 	let mountplateThickness = screwPenetrationLength + mountplateOverlap;
-	let mountscrewWallThickness = screwPenetrationLength - this.toolmountNut.getHeight();
+	let mountscrewWallThickness = screwPenetrationLength - this.toolmountNut.getHeight()*towerMountScrewScaleZ;
 
 	this.tower = tower;
 
@@ -554,18 +555,18 @@ window.jscad.tspi.miniecm.tool.mountplate = function(printer, params) {
 		);
 		mountplate = difference(
 			mountplate,
-			this.toolmountNut.getModel().translate([0, tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)])
+			this.toolmountNut.getModel().translate([0, tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
 		);
 		mountplate = difference(
 			mountplate,
-			this.toolmountNut.getModel().translate([0, -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)])
+			this.toolmountNut.getModel().translate([0, -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
 		);
 
 		// Cut slits to insert nuts from the side ...
 		mountplate = difference(
 			mountplate,
-			cube({ size : [(this.tower.getDimensionYReal()+10)/2, this.toolmountNut.getRadiusInside(), this.toolmountNut.getHeight()], center : true }).translate([(this.tower.getDimensionYReal()+10)/4+this.tower.getDimensionYRealAsymmetry(), -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)]),
-			cube({ size : [(this.tower.getDimensionYReal()+10)/2, this.toolmountNut.getRadiusInside(), this.toolmountNut.getHeight()], center : true }).translate([(this.tower.getDimensionYReal()+10)/4+this.tower.getDimensionYRealAsymmetry(),  tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()/2-(mountplateThickness-mountplateOverlap)])
+			cube({ size : [(this.tower.getDimensionYReal()+10)/2, this.toolmountNut.getRadiusInside(), this.toolmountNut.getHeight()*towerMountScrewScaleZ], center : true }).translate([(this.tower.getDimensionYReal()+10)/4+this.tower.getDimensionYRealAsymmetry(), -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)]),
+			cube({ size : [(this.tower.getDimensionYReal()+10)/2, this.toolmountNut.getRadiusInside(), this.toolmountNut.getHeight()*towerMountScrewScaleZ], center : true }).translate([(this.tower.getDimensionYReal()+10)/4+this.tower.getDimensionYRealAsymmetry(),  tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
 		);
 
 		// Add a sacrificial bridge immediatly on top of the nut
