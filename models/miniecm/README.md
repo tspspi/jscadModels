@@ -12,5 +12,12 @@ industrial machines using only off the shelf and 3D printed parts)
   * The fixed part is done in ([bedxy.jscad](./bedxy.jscad); work in progress)
   * The moveable sled ([xysled.jscad](./xysled.jscad); work in progress)
   * The carriage that connects the moveable sled to the fixed part ([xycarriage.jscad](./xycarriage.jscad); work in progress)
-* Different tool mounts
-  * A simple wire mount for typical tungsten welding electrodes ([headwire.jscad](./headwire.jscad); work in progress)
+
+### The Z axis
+
+![Z axis assembly including tool holder](./tower010.jpg)
+
+The z axis assembly consists of a tower that's screwed onto the XY table an provides
+linear movement along the third axis. Since there are only low forces this
+approach has been used. The tool is mounted on a mounting plated that's attached
+via screws onto a sled. The tower is contained in [headtower.jscad](./headtower.jscad).
