@@ -48,4 +48,5 @@ top of the model script.
 * Toy components
 * [Physics](./models/physics/)
   * Hacked screw based [mini cross table](./models/physics/hackedscrewcrosstable.jscad)
+  * Simple PLA [screw clamps for vacuum tubes](./models/physics/simpletubeclamps.jscad)
 * A small [MiniECM project](./models/miniecm/)
