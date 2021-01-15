@@ -59,6 +59,12 @@ function getParameterDefinitions() {
 		{ name: 'grpAxisY', type: 'group', caption: 'First axis (outside axis)' },
 		{ name: 'axis2Distance', type: 'float', caption: 'Second axis length', default: 20 },
 
+        { name: 'grpDisplay', type: 'group', caption: 'Display elements' },
+        { name: 'dispDisplayInnerTable', type: 'checkbox', caption: 'Display inner table', checked: true },
+        { name: 'dispInnerFrame', type: 'checkbox', caption: 'Display inner frame', checked: true },
+        { name: 'dispOuterFrame', type: 'checkbox', caption: 'Display outer frame', checked: true },
+        { name: 'dispNonPrintables', type: 'checkbox', caption: 'Display non primtables', checked: true },
+
 		{ name: 'grpPrinter', type: 'group', caption: 'Printer' },
 		{ name: 'scale', default: 1.0, type: 'float', caption: 'Scale' },
 		{ name: 'correctionInsideDiameter', default: 1, type: 'float', caption: 'Inside diameter correction' },
@@ -109,6 +115,11 @@ function screwCrossTable(printer, params) {
 
 		{ name: 'axis1Distance',				type: 'number',		default: 20		},
 		{ name: 'axis2Distance',				type: 'number',		default: 20		},
+
+        { name: 'dispDisplayInnerTable',        type: 'boolean',    default: true   },
+        { name: 'dispInnerFrame',               type: 'boolean',    default: true   },
+        { name: 'dispOuterFrame',               type: 'boolean',    default: true   },
+        { name: 'dispNonPrintables',            type: 'boolean',    default: true   },
 	];
 
 	this.parameters = { };
@@ -218,12 +229,13 @@ function screwCrossTable(printer, params) {
 		nonPrintables.push(guiderod4);
 		nonPrintables.push(this.nut.getModel().rotateX(90).translate([0,axis2Frame_OutWidth/2-1,realAxis2Frame_Height / 2]));
 
-		return union(
-			innerTable,
-			difference(innerFrame, union(guiderod3, guiderod4)),
-			outerFrame,
-			union(nonPrintables).setColor([0,1,0])
-		).scale(this.printer.scale);
+        let parts = [];
+        if(this.parameters['dispDisplayInnerTable']) { parts.push(innerTable); }
+        if(this.parameters['dispInnerFrame']) { parts.push(difference(innerFrame, union(guiderod3, guiderod4))); }
+        if(this.parameters['dispOuterFrame']) { parts.push(outerFrame); }
+        if(this.parameters['dispNonPrintables']) { parts.push(union(nonPrintables).setColor([0,1,0])); }
+
+        return union(parts).scale(this.printer.scale);
 	}
 }
 
