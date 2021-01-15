@@ -59,6 +59,11 @@ function getParameterDefinitions() {
 		{ name: 'grpAxisY', type: 'group', caption: 'First axis (outside axis)' },
 		{ name: 'axis2Distance', type: 'float', caption: 'Second axis length', default: 20 },
 
+        { name: 'grpRodMount', type: 'group', caption: 'Rod mount (chamber)' },
+        { name: 'dispMountExtension', type: 'checkbox', caption: 'Add mounting elements', checked: false },
+        { name: 'mountingRodThroughholdDia', type: 'float', default: 11, caption: 'Mounting hole diameter' },
+        { name: 'mountingRodSpacing', type: 'float', default: 130, caption: 'Mounting rod spacing' },
+
         { name: 'grpDisplay', type: 'group', caption: 'Display elements' },
         { name: 'dispDisplayInnerTable', type: 'checkbox', caption: 'Display inner table', checked: true },
         { name: 'dispInnerFrame', type: 'checkbox', caption: 'Display inner frame', checked: true },
@@ -116,10 +121,14 @@ function screwCrossTable(printer, params) {
 		{ name: 'axis1Distance',				type: 'number',		default: 20		},
 		{ name: 'axis2Distance',				type: 'number',		default: 20		},
 
+        { name: 'mountingRodThroughholdDia',    type: 'number',     default: 11     },
+        { name: 'mountingRodSpacing',           type: 'number',     default: 130    },
+
         { name: 'dispDisplayInnerTable',        type: 'boolean',    default: true   },
         { name: 'dispInnerFrame',               type: 'boolean',    default: true   },
         { name: 'dispOuterFrame',               type: 'boolean',    default: true   },
         { name: 'dispNonPrintables',            type: 'boolean',    default: true   },
+        { name: 'dispMountExtension',           type: 'boolean',    default: true   },
 	];
 
 	this.parameters = { };
@@ -229,11 +238,31 @@ function screwCrossTable(printer, params) {
 		nonPrintables.push(guiderod4);
 		nonPrintables.push(this.nut.getModel().rotateX(90).translate([0,axis2Frame_OutWidth/2-1,realAxis2Frame_Height / 2]));
 
+        let dispMountExtensions = [];
+        dispMountExtensions.push(
+            difference(
+                union(
+                    cube({ size : [2*this.parameters['mountingRodThroughholdDia'], this.parameters['mountingRodSpacing'], realAxis2Frame_Height], center : true }).translate([0,this.nut.getHeight()/2, realAxis2Frame_Height/2]),
+                    cylinder({ d : 2*this.parameters['mountingRodThroughholdDia'], h : realAxis2Frame_Height, center: true, fn : this.printer['resolutionCircle'] }).translate([0,this.parameters['mountingRodSpacing']/2,realAxis2Frame_Height/2]),
+                    cylinder({ d : 2*this.parameters['mountingRodThroughholdDia'], h : realAxis2Frame_Height, center: true, fn : this.printer['resolutionCircle'] }).translate([0,-this.parameters['mountingRodSpacing']/2,realAxis2Frame_Height/2])
+                ),
+                union(
+                    cube({ size : [2*this.parameters['mountingRodThroughholdDia'], axis2Frame_OutWidth + this.nut.getHeight(), realAxis2Frame_Height], center : true }).translate([0,this.nut.getHeight()/2, realAxis2Frame_Height/2]),
+                    cube({ size : [2*this.parameters['mountingRodThroughholdDia'], (this.parameters['mountingRodSpacing']-this.parameters['mountingRodThroughholdDia'])/2, realAxis2Frame_Height-2*this.parameters['frameWallWidth']], center : true })
+                        .translate([0,this.nut.getHeight()/2+(this.parameters['mountingRodSpacing']/2 - this.parameters['mountingRodThroughholdDia'])/2, realAxis2Frame_Height/2]),
+                    cylinder({ d : this.parameters['mountingRodThroughholdDia'], h : realAxis2Frame_Height, center: true, fn : this.printer['resolutionCircle'] }).translate([0,this.parameters['mountingRodSpacing']/2,realAxis2Frame_Height/2]),
+                    cylinder({ d : this.parameters['mountingRodThroughholdDia'], h : realAxis2Frame_Height, center: true, fn : this.printer['resolutionCircle'] }).translate([0,-this.parameters['mountingRodSpacing']/2,realAxis2Frame_Height/2])
+                )
+            ).translate([-this.nut.getHeight()/2, 0, 0 ])
+        );
+
         let parts = [];
         if(this.parameters['dispDisplayInnerTable']) { parts.push(innerTable); }
         if(this.parameters['dispInnerFrame']) { parts.push(difference(innerFrame, union(guiderod3, guiderod4))); }
         if(this.parameters['dispOuterFrame']) { parts.push(outerFrame); }
         if(this.parameters['dispNonPrintables']) { parts.push(union(nonPrintables).setColor([0,1,0])); }
+
+        if(this.parameters['dispMountExtension'] && this.parameters['dispOuterFrame']) { parts.push(union(dispMountExtensions)); }
 
         return union(parts).scale(this.printer.scale);
 	}
