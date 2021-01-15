@@ -555,11 +555,11 @@ window.jscad.tspi.miniecm.tool.mountplate = function(printer, params) {
 		);
 		mountplate = difference(
 			mountplate,
-			this.toolmountNut.getModel().translate([0, tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
+			this.toolmountNut.getModel().scale([1,1,towerMountScrewScaleZ]).translate([0, tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
 		);
 		mountplate = difference(
 			mountplate,
-			this.toolmountNut.getModel().translate([0, -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
+			this.toolmountNut.getModel().scale([1,1,towerMountScrewScaleZ]).translate([0, -tower.getBedMountScrewOffsetY(), this.toolmountNut.getHeight()*towerMountScrewScaleZ/2-(mountplateThickness-mountplateOverlap)])
 		);
 
 		// Cut slits to insert nuts from the side ...
