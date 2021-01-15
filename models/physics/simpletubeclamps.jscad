@@ -3,7 +3,7 @@ include('/mechanics/isothread.jscad');
 function getParameterDefinitions() {
 	return [
 		{ name : 'grpModel', type : 'group', caption : 'Model parameters' },
-		{ name : 'tubeDiameter', type : 'float', initial : 59.5+4, caption : 'Tube diameter' },
+		{ name : 'tubeDiameter', type : 'float', initial : 59.5+2, caption : 'Tube diameter' },
 		{ name : 'tubeHeight', type : 'float', initial : 100, caption : 'Tube height' },
 		{ name : 'clampDistance', type : 'float', initial : 42, caption : 'Clamp distance' },
 		{ name : 'clampHeight', type : 'float', initial : 12, caption : 'Clamp height' },
@@ -11,7 +11,7 @@ function getParameterDefinitions() {
 		{ name : 'rodSpacing' , type : 'float', initial: 130, caption : 'Rod spacing' },
 		{ name : 'rodLength' , type : 'float', initial : 1000, caption : 'Rod length' },
 		{ name : 'clampThickness', type : 'float', initial : 5, caption: 'Clamp thickness' },
-		{ name : 'clampSlitSize' , type : 'float', initial : 3, caption: 'Slit size' },
+		{ name : 'clampSlitSize' , type : 'float', initial : 5, caption: 'Slit size' },
 		{ name : 'clampNutM', type : 'float', initial : 4, caption : 'Nut M' },
 
 		{ name : 'grpDisplay', type : 'group', caption : 'Display selection' },
@@ -86,7 +86,9 @@ function main(params) {
 		union(
 			cylinder( { d : tubeDiameter + 2*clampThickness, h : clampHeight, center : true, fn : fn }).translate([0,0, clampHeight/2]),
 			cube({ size : [ clampSlitSize + 2 * (1 + nut.getHeight()), 4 + 2*nut.getRadiusOutside(), Math.max(clampHeight, nut.getRadiusOutside() + 2)], center : true }).translate( [0, -tubeDiameter/2 - clampThickness - nut.getRadiusOutside(), Math.max(clampHeight, nut.getRadiusOutside() + 2) / 2] ),
-			cube( { size : [ rodDistance + 2 * mountscrew.getThroughholeCoarse() + 2, 2 * mountscrew.getThroughholeCoarse() + 2, clampHeight ], center : true } ).translate([0,0,clampHeight/2])
+			cube( { size : [ rodDistance, 2 * mountscrew.getThroughholeCoarse() + 2, clampHeight ], center : true } ).translate([0,0,clampHeight/2]),
+			cylinder( { r : mountscrew.getThroughholeCoarse() + 1, h : clampHeight, center : true, fn : fn } ).translate([rodDistance/2, 0, clampHeight/2]),
+			cylinder( { r : mountscrew.getThroughholeCoarse() + 1, h : clampHeight, center : true, fn : fn } ).translate([-rodDistance/2, 0, clampHeight/2])
 		),
 		union(
 			cylinder( { d : tubeDiameter, h : clampHeight, center : true, fn : fn }).translate([0,0, clampHeight/2]),
