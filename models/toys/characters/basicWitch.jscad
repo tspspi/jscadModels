@@ -35,10 +35,10 @@ function main(params) {
             sphere( { fn : 200, r : params.headdiameter/2, center: true }).translate([0,0,params.bodyheight/2+2*params.headdiameter/2]),
             union(
                 sphere( { r : params.eyeDiameter/2, center: true}).translate([params.noseDiameter,-params.headdiameter/2+params.noseDiameter/8,params.bodyheight/2+2*params.headdiameter/2+params.noseDiameter/2+params.eyeDiameter/2]),
-                sphere( { r : params.eyeDiameter/2, center: true}).translate([-params.noseDiameter,-params.headdiameter/2+params.noseDiameter/8,params.bodyheight/2+2*params.headdiameter/2+params.noseDiameter/2+params.eyeDiameter/2])
+                sphere( { r : params.eyeDiameter/2, center: true}).translate([-params.noseDiameter,-params.headdiameter/2+params.noseDiameter/8,params.bodyheight/2+2*params.headdiameter/2+params.noseDiameter/2+params.eyeDiameter/2]),
+				torus( { ri : params.mouthDiameter/2, ro: params.mouthWidth/2 }).rotateX(20).translate([0,-(params.headdiameter/2-params.mouthWidth/2-params.mouthDiameter/2),params.bodyheight/2+2*params.headdiameter/2-params.noseDiameter/3])
             )
         ),
-        sphere( { r : params.noseDiameter/2, center: true}).translate([0,-params.headdiameter/2+params.noseDiameter/4,params.bodyheight/2+2*params.headdiameter/2+params.noseDiameter/2]),
-        torus( { ri : params.mouthDiameter/2, ro: params.mouthWidth/2 }).rotateX(20).translate([0,-(params.headdiameter/2-params.mouthWidth/2-params.mouthDiameter/2),params.bodyheight/2+2*params.headdiameter/2-params.noseDiameter/3])
+        sphere( { r : params.noseDiameter/2, center: true}).translate([0,-params.headdiameter/2+params.noseDiameter/4,params.bodyheight/2+2*params.headdiameter/2+params.noseDiameter/2])
     );
 }
