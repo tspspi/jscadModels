@@ -22,3 +22,11 @@ A simple model for a plastic clamp to allow easy attachment of vacuum tubes
 inside a vacuum chamber (turns out [to work pretty well inside vacuum when printed from PLA](https://www.tspi.at/nonpublicdrafts/print3dinvacuumplafdm.html))
 
 ![Simple clamps](./simpletubeclamps.jpg)
+
+## Optics: Simple post substitute
+
+[optics/post01.jscad](./optics/post01.jscad)
+
+A standard post for optics equipment
+
+![Simple optics post](./optics/post01.png)
