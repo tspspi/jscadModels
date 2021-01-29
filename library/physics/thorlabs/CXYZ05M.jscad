@@ -1,7 +1,9 @@
 /*
-    Simple template for the Thorlabs CXYZ05M to allow
-    easy design of mechanical assemblies around this
-    XYZ adjustment table
+    Simple and really basic template for the Thorlabs
+    CXYZ05M to allow easy design of mechanical assemblies
+    around this XYZ adjustment table
+
+    (Currently unfinished)
 */
 
 if(typeof window !== 'object') { window = new Object(); }
@@ -33,6 +35,12 @@ window.jscad.tspi.physics.thorlabs.CXYZ05M = function(printer, params) {
     	body = difference(
     		body,
     		cylinder({ d : 13.589, h : 25.1, center : true }).translate([0,0,-25.1/2+4.4])
+    	);
+
+        body = union(
+    		body,
+    		cylinder( { d : 7.3, h : 14.2, center : true }).translate([0,0,14.2/2]).rotateX(-90).translate([0,24.8,-14.6/2]),
+    		cylinder( { d : 7.3, h : 14.2, center : true }).translate([0,0,14.2/2]).rotateX(-90).translate([0,24.8,-14.6/2]).rotateZ(90)
     	);
 
     	return body;
