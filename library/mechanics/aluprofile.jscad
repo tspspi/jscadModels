@@ -45,6 +45,34 @@
 	}
 */
 
+/*
+	Simple cube example:
+
+	include('/mechanics/aluprofile.jscad');
+	function main() {
+		let obj1 = new window.jscad.tspi.mechanics.aluprofile.b20x20n6({}, { l : 100 });
+		let obj2 = new window.jscad.tspi.mechanics.aluprofile.b20x20n6({}, { l : 100-2*20 });
+
+		obj1 = obj1.getTemplate();
+		obj2 = obj2.getTemplate();
+
+		return union(
+		    obj2.translate([ 40,  40, 50]),
+		    obj2.translate([-40,  40, 50]),
+		    obj2.translate([ 40, -40, 50]),
+		    obj2.translate([-40, -40, 50]),
+		    obj1.rotateX(90).translate([40, 0, 10]),
+		    obj1.rotateX(90).translate([-40, 0, 10]),
+		    obj2.rotateY(90).translate([0, -40, 10]),
+		    obj2.rotateY(90).translate([0,  40, 10]),
+		    obj1.rotateX(90).translate([40, 0, 90]),
+		    obj1.rotateX(90).translate([-40, 0, 90]),
+		    obj2.rotateY(90).translate([0, -40, 90]),
+		    obj2.rotateY(90).translate([0,  40, 90])
+        );
+	}
+*/
+
 
 if(typeof window === 'undefined') { window = new Object(); }
 if(typeof window.jscad !== 'object') { window.jscad = new Object(); }
