@@ -166,10 +166,10 @@ window.jscad.tspi.mechanics.aluprofile.b20x20n6 = function(printer, params) {
 		profile = difference(
 			profile,
 			union(
-				cutTool.translate([(20*this.parameters['nx']/2)-1.5/2, (20*this.parameters['ny']/2)-1.5/2, 0]),
-				cutTool.translate([(20*this.parameters['nx']/2)-1.5/2, (20*this.parameters['ny']/2)-1.5/2, 0]).rotateZ(90),
-				cutTool.translate([(20*this.parameters['nx']/2)-1.5/2, (20*this.parameters['ny']/2)-1.5/2, 0]).rotateZ(180),
-				cutTool.translate([(20*this.parameters['nx']/2)-1.5/2, (20*this.parameters['ny']/2)-1.5/2, 0]).rotateZ(270)
+				cutTool.translate([ (20*this.parameters['nx']/2)-1.5/2,  (20*this.parameters['ny']/2)-1.5/2, 0]),
+				cutTool.translate([ (20*this.parameters['nx']/2)-1.5/2, -(20*this.parameters['ny']/2)-1.5/2, 0]),
+				cutTool.translate([-(20*this.parameters['nx']/2)-1.5/2,  (20*this.parameters['ny']/2)-1.5/2, 0]),
+				cutTool.translate([-(20*this.parameters['nx']/2)-1.5/2, -(20*this.parameters['ny']/2)-1.5/2, 0])
 			)
 		);
 
