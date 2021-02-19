@@ -180,6 +180,7 @@
 
 				let nutm4 = new window.jscad.tspi.isoNut( {}, { m : 4  });
 				let screwm4 = new window.jscad.tspi.iso4762Screw( {}, { m : 4, l : 12 });
+                let nutm6 = new window.jscad.tspi.isoNut( {}, { m : 6  });
 
 				let stepperMount_h = 2*gearwheel.pitchDiameter;
 				let stepperMount = difference(
@@ -195,8 +196,17 @@
 						cylinder( { d : 4.5, h : 66*2, center : true, fn : fn }).rotateX(90).translate([ 35/2, 0, -7.5-gearwheel.pitchDiameter-8]),
 						cylinder( { d : 4.5, h : 66*2, center : true, fn : fn }).rotateY(90).translate([0,  35/2, -7.5-gearwheel.pitchDiameter-8]),
 						cylinder( { d : 4.5, h : 66*2, center : true, fn : fn }).rotateX(90).translate([-35/2, 0, -7.5-gearwheel.pitchDiameter-8]),
-						cylinder( { d : 4.5, h : 66*2, center : true, fn : fn }).rotateY(90).translate([0, -35/2, -7.5-gearwheel.pitchDiameter-8])
+						cylinder( { d : 4.5, h : 66*2, center : true, fn : fn }).rotateY(90).translate([0, -35/2, -7.5-gearwheel.pitchDiameter-8]),
 
+                        nutm6.getModel().translate([-15, -15,-15-stepperMount_h+nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([ 15, -15,-15-stepperMount_h+nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([ 15,  15,-15-stepperMount_h+nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([-15,  15,-15-stepperMount_h+nutm6.getHeight()/2]),
+
+                        nutm6.getModel().translate([-15, -15,-15-nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([ 15, -15,-15-nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([ 15,  15,-15-nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([-15,  15,-15+nutm6.getHeight()/2])
 					)
 				);
 			stepperMount = difference(stepperMount, stepper.getModel().scale(1.02).rotateZ(180).rotateX(-90).translate([0,33,-7.5-gearwheel.pitchDiameter]));
