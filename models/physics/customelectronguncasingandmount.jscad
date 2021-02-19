@@ -144,6 +144,7 @@
             { name : 'displayGears', type : 'checkbox', caption : 'Display all gears', checked : true },
     		{ name : 'displayOpticsClamp', type : 'checkbox', caption : 'Optics clamp', checked : true },
     		{ name : 'displayStepperMount', type : 'checkbox', caption : 'Stepper mount', checked : true },
+            { name : 'setShortVariant', type : 'checkbox', caption : 'Short variant', checked : true },
 
     		{ name : 'grpPrinter', type : 'group', caption : 'Printer parameters' },
     		{ name : 'resolutionCircle', type : 'int', initial : 64, caption: 'Resolution circle' }
@@ -156,11 +157,13 @@
         let displayStepperMount = true;
         let displayOpticsClamp = true;
         let displayGears = true;
+        let shortVariant = false;
 
         if(params['dspNonPrintables'])    { onlyPrinted = false;        } else { onlyPrinted = true;          }
         if(params['displayOpticsClamp'])  { displayOpticsClamp = true;  } else { displayOpticsClamp = false;  }
         if(params['displayStepperMount']) { displayStepperMount = true; } else { displayStepperMount = false; }
         if(params['displayGears'])        { displayGears = true;        } else { displayGears = false;        }
+        if(params['setShortVariant'])     { shortVariant = true;        } else { shortVariant = false;        }
 
         if(params['resolutionCircle']) {
             fn = params['resolutionCircle'];
@@ -206,11 +209,27 @@
                         nutm6.getModel().translate([-15, -15,-15-nutm6.getHeight()/2]),
                         nutm6.getModel().translate([ 15, -15,-15-nutm6.getHeight()/2]),
                         nutm6.getModel().translate([ 15,  15,-15-nutm6.getHeight()/2]),
-                        nutm6.getModel().translate([-15,  15,-15+nutm6.getHeight()/2])
+                        nutm6.getModel().translate([-15,  15,-15-nutm6.getHeight()/2])
 					)
 				);
 			stepperMount = difference(stepperMount, stepper.getModel().scale(1.02).rotateZ(180).rotateX(-90).translate([0,33,-7.5-gearwheel.pitchDiameter]));
 			stepperMount = difference(stepperMount, stepper.getModel().scale(1.02).rotateZ(180).rotateX(-90).translate([0,33,-7.5-gearwheel.pitchDiameter]).rotateZ(90));
+
+            if(shortVariant) {
+                // Simply cut 15mm on the lower side, re-cut the nut tempaltes ...
+                stepperMount = difference(
+                    stepperMount,
+
+                    union(
+                        cube({ size : [ 66, 66, 15 ], center : true }).translate([0, 0, -15-stepperMount_h+15/2]),
+
+                        nutm6.getModel().translate([-15, -15,-15-stepperMount_h+15+nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([ 15, -15,-15-stepperMount_h+15+nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([ 15,  15,-15-stepperMount_h+15+nutm6.getHeight()/2]),
+                        nutm6.getModel().translate([-15,  15,-15-stepperMount_h+15+nutm6.getHeight()/2])
+                    )
+                )
+            }
 
 			let nutslits = union(
 				cube({ size : [ 35/2, nutm4.getHeight()*1.01, nutm4.getRadiusOutside()*2*1.01 ], center : false }).rotateZ(90).translate([-33+7+nutm4.getHeight()/2, 35/2,-7.5-gearwheel.pitchDiameter-8-nutm4.getRadiusOutside()]),
