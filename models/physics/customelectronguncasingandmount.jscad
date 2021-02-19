@@ -228,12 +228,12 @@
 			).setColor([0.9,0.9,0.9]);
 
 			let nuts = union(
-				nutm4.getModel().scale(1.1).rotateZ(30).rotateX(-90).translate([ 35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]),
-				nutm4.getModel().scale(1.1).rotateZ(30).rotateX(-90).translate([ -35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]),
-				nutm4.getModel().scale(1.1).rotateZ(30).rotateX(-90).translate([ 35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]).rotateZ(90),
-				nutm4.getModel().scale(1.1).rotateZ(30).rotateX(-90).translate([ -35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]).rotateZ(90)
+				nutm4.getModel().scale(1.01).rotateZ(30).rotateX(-90).translate([ 35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]),
+				nutm4.getModel().scale(1.01).rotateZ(30).rotateX(-90).translate([ -35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]),
+				nutm4.getModel().scale(1.01).rotateZ(30).rotateX(-90).translate([ 35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]).rotateZ(90),
+				nutm4.getModel().scale(1.01).rotateZ(30).rotateX(-90).translate([ -35/2, 33-7, -7.5-gearwheel.pitchDiameter-8]).rotateZ(90)
 			).setColor([0.95, 0.95, 0.95]);
-
+            stepperMount = difference(stepperMount, nuts);
 
 			let rodsassembly = union(
 				cylinder( { d : 6*1.1 , h : 170, center : true, fn : fn } ).translate([-15,-15,0]),
