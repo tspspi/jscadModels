@@ -30,6 +30,7 @@ top of the model script.
 	* [LM8LUU](./library/mechanics/bearingLM8LUU.jscad)
   * A template for aluminium profiles
     * [20x20, B-type](./library/mechanics/aluprofile.jscad) or multiples with 6mm nut
+	* Templates for [Motedis Delrin AntiBacklash Nuts](./library/mechanics/motedisDelrin.jscad)
 * Packaging
   * A [simple box](./library/packaging/basicbox1.jscad) generator with rounded edges
 * Toys
