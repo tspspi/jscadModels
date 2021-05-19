@@ -145,6 +145,7 @@
     		{ name : 'displayOpticsClamp', type : 'checkbox', caption : 'Optics clamp', checked : true },
     		{ name : 'displayStepperMount', type : 'checkbox', caption : 'Stepper mount', checked : true },
             { name : 'setShortVariant', type : 'checkbox', caption : 'Short variant', checked : true },
+            { name : 'setVariantMuMetalShieldSlim', type : 'checkbox', caption : 'Slim variant', checked : true },
 
     		{ name : 'grpPrinter', type : 'group', caption : 'Printer parameters' },
     		{ name : 'resolutionCircle', type : 'int', initial : 64, caption: 'Resolution circle' }
@@ -158,12 +159,14 @@
         let displayOpticsClamp = true;
         let displayGears = true;
         let shortVariant = false;
+        let slimVariant = false;
 
         if(params['dspNonPrintables'])    { onlyPrinted = false;        } else { onlyPrinted = true;          }
         if(params['displayOpticsClamp'])  { displayOpticsClamp = true;  } else { displayOpticsClamp = false;  }
         if(params['displayStepperMount']) { displayStepperMount = true; } else { displayStepperMount = false; }
         if(params['displayGears'])        { displayGears = true;        } else { displayGears = false;        }
         if(params['setShortVariant'])     { shortVariant = true;        } else { shortVariant = false;        }
+        if(params['setVariantMuMetalShieldSlim']) { slimVariant = true; } else { slimVariant = false;         }
 
         if(params['resolutionCircle']) {
             fn = params['resolutionCircle'];
@@ -283,15 +286,37 @@
         if(displayStepperMount) { printedParts.push(difference(stepperMount.setColor([0.3176,0.1922,0.2157]), rodsassembly)); }
 
         if(displayOpticsClamp) {
-            printedParts.push(
-                difference(
-                    opticsclamp().translate([0,0,30]).setColor([0.3176,0.1922,0.2157]),
-                    union(
-                        optics().translate([0,0,sm05t2.getHeight()+sm05t1.getHeight()/2-sm05rr.getHeight()+5]),
-                        rodsassembly
+            if(!slimVariant) {
+                printedParts.push(
+                    difference(
+                        opticsclamp().translate([0,0,30]).setColor([0.3176,0.1922,0.2157]),
+                        union(
+                            optics().translate([0,0,sm05t2.getHeight()+sm05t1.getHeight()/2-sm05rr.getHeight()+5]),
+                            rodsassembly
+                        )
                     )
-                )
-            );
+                );
+            } else {
+                printedParts.push(
+                    union(
+                        difference(
+                            opticsclamp().translate([0,0,30]).setColor([0.3176,0.1922,0.2157]),
+                            union(
+                                optics().translate([0,0,sm05t2.getHeight()+sm05t1.getHeight()/2-sm05rr.getHeight()+5]),
+                                rodsassembly,
+                                difference(
+                                    cube({ size : [ 100, 100, 1000 ], center : true }),
+                                    cylinder( { d : 58, h : 1000, center : true, fn : 128 })
+                                ),
+                                cube( { size : [ 100, 100, 1000 ], center : true }).translate([0, -50-21, 0]),
+                                cube( { size : [ 5, 50, 1000 ], center : true }).translate([+2.5 - 58/2, 0, 0]),
+                                cube( { size : [ 5, 50, 1000 ], center : true }).translate([-2.5 + 58/2, 0, 0])
+                            )
+                        ),
+                        cube({ size : [ 20, 0.3, 53 ], center : true }).translate([ 0, +0.3/2 + 12, 53/2+30 ])
+                    )
+                );
+            }
         }
 
         printedParts = union(printedParts);
