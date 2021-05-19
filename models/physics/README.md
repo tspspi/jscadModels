@@ -23,6 +23,13 @@ inside a vacuum chamber (turns out [to work pretty well inside vacuum when print
 
 ![Simple clamps](./simpletubeclamps.jpg)
 
+There is a second set of mounting clamps that's used
+under a different set of conditions:
+
+[customelectronguncasingandmount.jscad](./customelectronguncasingandmount.jscad)
+
+![Alternative clamping system](./customelectronguncasingandmount.png)
+
 ## Optics: Simple post substitute
 
 [optics/post01.jscad](./optics/post01.jscad)
