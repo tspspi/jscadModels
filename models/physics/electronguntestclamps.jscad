@@ -15,8 +15,8 @@ function getParameterDefinitions() {
 }
 
 function main(params) {
-//	let fn = 256;
-	let fn = 32;
+	let fn = 256;
+//	let fn = 32;
     let wsMountScrew = new window.jscad.tspi.iso4762Screw( {}, { m : 6, l : 13, corehole : true, throughhole : false });
 
 	let p1 = difference(
