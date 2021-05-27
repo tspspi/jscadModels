@@ -15,7 +15,8 @@ function getParameterDefinitions() {
 }
 
 function main(params) {
-	let fn = 256;
+//	let fn = 256;
+	let fn = 32;
     let wsMountScrew = new window.jscad.tspi.iso4762Screw( {}, { m : 6, l : 13, corehole : true, throughhole : false });
 
 	let p1 = difference(
@@ -59,15 +60,15 @@ function main(params) {
         union(
             cylinder({ d : p3diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p3diam/2+5]),
             cylinder({ d : 5, h : 8, center : true, fn : fn }).translate([0,0,5/2]),
-			cylinder({ d : 5, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-5,0,p3_zlen/2]),
-			cylinder({ d : 5, h : p3_zlen, center : true, fn : fn }).translate([-p3_xlen/2+5,0,p3_zlen/2])
+			cylinder({ d : 5, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-11,0,p3_zlen/2]),
+			cylinder({ d : 5, h : p3_zlen, center : true, fn : fn }).translate([-p3_xlen/2+11,0,p3_zlen/2])
         )
     );
     p3 = difference(
 		p3,
 		difference(
 			cube({ size : [100, 10, 100], center : true }),
-			cylinder( { d : 80+15, h : 10, center : true, fn : fn }).rotateX(90)
+			cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
 		).translate([0,0,80/2])
 	);
 
@@ -75,10 +76,10 @@ function main(params) {
 			cube({ size : [p3_xlen, p3_ylen, p3_zlen], center : true }).translate([0,0,p3_zlen/2]),
         union(
             cylinder({ d : p3diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p3diam/2+5]),
-			cylinder({ d : 6.5, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-5,0,p3_zlen/2]),
-			cylinder({ d : 6.5, h : p3_zlen, center : true, fn : fn }).translate([-p3_xlen/2+5,0,p3_zlen/2]),
-			cylinder({ d : 10, h : p3_zlen/2, center : true, fn : fn }).translate([ p3_xlen/2-5,0,p3_zlen/4]),
-			cylinder({ d : 10, h : p3_zlen/2, center : true, fn : fn }).translate([-p3_xlen/2+5,0,p3_zlen/4])
+			cylinder({ d : 6.5, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-11,0,p3_zlen/2]),
+			cylinder({ d : 6.5, h : p3_zlen, center : true, fn : fn }).translate([-p3_xlen/2+11,0,p3_zlen/2]),
+			cylinder({ d : 12, h : p3_zlen/2, center : true, fn : fn }).translate([ p3_xlen/2-11,0,p3_zlen/4]),
+			cylinder({ d : 12, h : p3_zlen/2, center : true, fn : fn }).translate([-p3_xlen/2+11,0,p3_zlen/4])
         )
 	).rotateY(180).translate([0,0,p3_zlen]);
 
@@ -86,8 +87,27 @@ function main(params) {
 		p3_2,
 		difference(
 			cube({ size : [100, 10, 100], center : true }),
-			cylinder( { d : 80+15, h : 10, center : true, fn : fn }).rotateX(90)
+			cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
 		).translate([0,0,0])
+	);
+
+	p3_2 = difference(
+		p3_2,
+		difference(
+			cube({ size : [100, 10, 100], center : true }),
+			cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
+		).translate([0,0,0])
+	);
+
+	p3_2 = difference(
+		p3_2,
+		difference(
+			cube({ size : [100, 10, 100], center : true}),
+			union(
+				cylinder({ d : 80+15-28, h : 10, center : true, fn : fn}).rotateX(90),
+				cube({ size : [150, 150, 26], center : true}).translate([0,0,0])
+			)
+		)
 	);
 
 
@@ -100,15 +120,15 @@ function main(params) {
         union(
             cylinder({ d : p4diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p4diam/2+5]),
             cylinder({ d : 5, h : 8, center : true, fn : fn }).translate([0,0,5/2]),
-			cylinder({ d : 5, h : p4_zlen, center : true, fn : fn }).translate([ p4_xlen/2-5,0,p4_zlen/2]),
-			cylinder({ d : 5, h : p4_zlen, center : true, fn : fn }).translate([-p4_xlen/2+5,0,p4_zlen/2])
+			cylinder({ d : 5, h : p4_zlen, center : true, fn : fn }).translate([ p4_xlen/2-11,0,p4_zlen/2]),
+			cylinder({ d : 5, h : p4_zlen, center : true, fn : fn }).translate([-p4_xlen/2+11,0,p4_zlen/2])
         )
     );
 	p4 = difference(
 		p4,
 		difference(
 			cube({ size : [100, 10, 100], center : true }),
-			cylinder( { d : 80+15, h : 10, center : true, fn : fn }).rotateX(90)
+			cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
 		).translate([0,0,80/2])
 	);
 
@@ -116,10 +136,10 @@ function main(params) {
 			cube({ size : [p4_xlen, p4_ylen, p4_zlen], center : true }).translate([0,0,p4_zlen/2]),
         union(
             cylinder({ d : p4diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p4diam/2+5]),
-			cylinder({ d : 6.5, h : p4_zlen, center : true, fn : fn }).translate([ p4_xlen/2-5,0,p4_zlen/2]),
-			cylinder({ d : 6.5, h : p4_zlen, center : true, fn : fn }).translate([-p4_xlen/2+5,0,p4_zlen/2]),
-			cylinder({ d : 10, h : p3_zlen/2, center : true, fn : fn }).translate([ p3_xlen/2-5,0,p3_zlen/4]),
-			cylinder({ d : 10, h : p3_zlen/2, center : true, fn : fn }).translate([-p3_xlen/2+5,0,p3_zlen/4])
+			cylinder({ d : 6.5, h : p4_zlen, center : true, fn : fn }).translate([ p4_xlen/2-11,0,p4_zlen/2]),
+			cylinder({ d : 6.5, h : p4_zlen, center : true, fn : fn }).translate([-p4_xlen/2+11,0,p4_zlen/2]),
+			cylinder({ d : 12, h : p3_zlen/2, center : true, fn : fn }).translate([ p3_xlen/2-11,0,p3_zlen/4]),
+			cylinder({ d : 12, h : p3_zlen/2, center : true, fn : fn }).translate([-p3_xlen/2+11,0,p3_zlen/4])
         )
 	).rotateY(180).translate([0,0,p4_zlen]);
 
@@ -127,9 +147,21 @@ function main(params) {
 		p4_2,
 		difference(
 			cube({ size : [100, 10, 100], center : true }),
-			cylinder( { d : 80+15, h : 10, center : true, fn : fn }).rotateX(90)
+			cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
 		).translate([0,0,0])
 	);
+
+	p4_2 = difference(
+		p4_2,
+		difference(
+			cube({ size : [100, 10, 100], center : true}),
+			union(
+				cylinder({ d : 80+15-28, h : 10, center : true, fn : fn}).rotateX(90),
+				cube({ size : [150, 150, 26], center : true}).translate([0,0,0])
+			)
+		)
+	);
+
 
     let screwModels = union(
         wsMountScrew.getTemplate().rotateX(-90).translate([0, 10, 32+20]),
