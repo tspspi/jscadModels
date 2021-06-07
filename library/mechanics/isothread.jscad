@@ -2,8 +2,10 @@
 	ISO Threads library.
 
 	Currently implements:
-		Nut Templates (without threading; Inside diameter correction currently affects
+		* Nut Templates (without threading; Inside diameter correction currently affects
 					   outside diameter because it's an template)
+        * DIN 912 / ISO4762 metric cylindrical head screw templates
+        * DIN 7991 countersunk head screw templates
 */
 /*
 	Redistribution and use in source and binary forms, with or without
@@ -157,6 +159,115 @@ window.jscad.tspi.iso4762Screw = function(printer, params) {
 		let threadedLength = (this.l > this.b) ? this.b : this.l;
 
 		let tpl = cylinder({ d : this.dk+this.printer['correctionInsideDiameter'] , h : this.k, center : true, fn : fn }).translate([0,0,this.k/2 + this.l]);
+
+		/* Now it depends on if we should add an non-threaded part at the top */
+		if(this.b < this.l) {
+			tpl = union(
+				tpl,
+				cylinder({ d : throughholeDiameter+this.printer['correctionInsideDiameter'], h : this.l - this.b, center : true, fn : fn }).translate([0,0,(this.l - this.b)/2 + this.b])
+			);
+		}
+		tpl = union(
+			tpl,
+			cylinder({ d : screwpartDiameter+this.printer['correctionInsideDiameter'], h : threadedLength, center : true, fn : fn }).translate([0,0,threadedLength/2])
+		);
+
+		return tpl.scale(this.printer['scale']).setColor([0.8, 0.8, 0.8]);
+	}
+}
+
+window.jscad.tspi.din7991Screw = function(printer, params) {
+	knownParameters = [
+		{ name: 'm',				type: 'number',					default: -1				},
+		{ name : 'l',				type : 'number',				default: -1				},
+		{ name : 'corehole',		type : 'boolean',				default : false			},
+		{ name : 'throughhole',		type : 'boolean',				default : true			},
+	];
+
+	knownPrinterParameters = [
+		{ name: 'scale', 						type: 'number', 	default: 1 		},
+		{ name: 'correctionInsideDiameter', 	type: 'number', 	default: 0 		},
+		{ name: 'correctionOutsideDiameter', 	type: 'number', 	default: 0 		},
+		{ name: 'resolutionCircle', 			type: 'number', 	default: 360 	},
+	];
+
+	this.parameters = { };
+	this.printer = { };
+	this.error = false;
+
+	for(var i = 0; i < knownParameters.length; i++) {
+		if(typeof(params[knownParameters[i].name]) === knownParameters[i].type) {
+			this.parameters[knownParameters[i].name] = params[knownParameters[i].name];
+		} else if(knownParameters[i].default != -1) {
+			this.parameters[knownParameters[i].name] = knownParameters[i].default;
+		} else {
+			this.error = true;
+		}
+	}
+	for(i = 0; i < knownPrinterParameters.length; i++) {
+		if(typeof(printer[knownPrinterParameters[i].name]) === knownPrinterParameters[i].type) {
+			this.printer[knownPrinterParameters[i].name] = printer[knownPrinterParameters[i].name];
+		} else if(knownPrinterParameters[i].default != -1) {
+			this.printer[knownPrinterParameters[i].name] = knownPrinterParameters[i].default;
+		} else {
+			this.error = true;
+		}
+	}
+
+	this.metricScrewDimensionsDIN7991 = [
+		{ m : 2,   d2 : 4,  k : 1.2,  b : 14, s : 1.25, d : 2  , corehole :  1.6  , throughhole_fine :  2.2 , throughhole_medium :  2.4 , throughhole_coarse :  2.6 },
+		{ m : 2.5, d2 : 5,  k : 1.5,  b : 16, s : 1.5,  d : 2.5, corehole :  2.05 , throughhole_fine :  2.7 , throughhole_medium :  2.9 , throughhole_coarse :  3.1 },
+		{ m : 3,   d2 : 6,  k : 1.7,  b : 18, s : 2,    d : 3  , corehole :  2.5  , throughhole_fine :  3.2 , throughhole_medium :  3.4 , throughhole_coarse :  3.6 },
+		{ m : 4,   d2 : 8,  k : 2.3,  b : 20, s : 2.5,  d : 4  , corehole :  3.3  , throughhole_fine :  4.3 , throughhole_medium :  4.5 , throughhole_coarse :  4.8 },
+		{ m : 5,   d2 : 10, k : 2.8,  b : 22, s : 3,    d : 5  , corehole :  4.2  , throughhole_fine :  5.3 , throughhole_medium :  5.5 , throughhole_coarse :  5.8 },
+		{ m : 6,   d2 : 12, k : 3.3,  b : 24, s : 4,    d : 6  , corehole :  5    , throughhole_fine :  6.4 , throughhole_medium :  6.6 , throughhole_coarse :  7.0 },
+		{ m : 8,   d2 : 16, k : 4.4,  b : 28, s : 5,    d : 8  , corehole :  6.8  , throughhole_fine :  8.4 , throughhole_medium :  9.0 , throughhole_coarse : 10.0 },
+		{ m : 10,  d2 : 20, k : 5.5,  b : 32, s : 6,    d : 10 , corehole :  8.5  , throughhole_fine : 10.5 , throughhole_medium : 11.0 , throughhole_coarse : 12.0 },
+		{ m : 12,  d2 : 24, k : 6.5,  b : 36, s : 8,    d : 12 , corehole : 10.2  , throughhole_fine : 13.0 , throughhole_medium : 13.5 , throughhole_coarse : 14.5 },
+		{ m : 14,  d2 : 27, k : 7,    b : 40, s : 10,   d : 14 , corehole : -1    , throughhole_fine : 15.0 , throughhole_medium : 15.5 , throughhole_coarse : 16.5 },
+		{ m : 16,  d2 : 30, k : 7.5,  b : 44, s : 10,   d : 16 , corehole : 14    , throughhole_fine : 17.0 , throughhole_medium : 17.5 , throughhole_coarse : 18.5 },
+		{ m : 18,  d2 : 33, k : 8,    b : 48, s : 12,   d : 18 , corehole : -1    , throughhole_fine : 19.0 , throughhole_medium : 20.0 , throughhole_coarse : 21.0 },
+		{ m : 20,  d2 : 36, k : 8.5,  b : 52, s : 12,   d : 20 , corehole : 17.5  , throughhole_fine : 21.0 , throughhole_medium : 22.0 , throughhole_coarse : 24.0 },
+		{ m : 22,  d2 : 36, k : 13.1, b : 52, s : 14,   d : 20 , corehole : 17.5  , throughhole_fine : 21.0 , throughhole_medium : 22.0 , throughhole_coarse : 24.0 },
+		{ m : 24,  d2 : 39, k : 14,   b : 60, s : 14,   d : 24 , corehole : 21    , throughhole_fine : 25.0 , throughhole_medium : 26.0 , throughhole_coarse : 28.0 }
+	];
+
+	this.getNormParameter = function(m) {
+		for(i = 0; i < this.metricScrewDimensionsDIN7991.length; i++) {
+			if(this.metricScrewDimensionsDIN7991[i].m == m) {
+				return this.metricScrewDimensionsDIN7991[i];
+			}
+		}
+		alert("Request for unknown nut metric "+m);
+		return null;
+	}
+
+	let myParameters = this.getNormParameter(this.parameters['m']);
+
+	this.m = this.parameters['m'];
+	this.d2 = myParameters['d2'];
+	this.k = myParameters['k'];
+	this.s = myParameters['s'];
+	this.d = myParameters['d'];
+	this.l = this.parameters['l'];
+	this.corehole = myParameters['corehole'];
+	this.throughhole_fine = myParameters['throughhole_fine'];
+	this.throughhole_medium = myParameters['throughhole_medium'];
+	this.throughhole_coarse = myParameters['throughhole_coarse'];
+
+	this.getRadiusThreadCore = function() { return this.corehole; }
+	this.getThroughholeFine = function()	{ return this.throughhole_fine; }
+	this.getThroughholeMedium = function()	{ return this.throughhole_medium; }
+	this.getThroughholeCoarse = function()	{ return this.throughhole_coarse; }
+
+	this.getTemplate = function() {
+		let onlyCorehole = this.parameters['corehole'] || false;
+		let throughholeDiameter = this.parameters['throughhole'] ? this.throughhole_medium : this.d;
+		let screwpartDiameter = this.parameters['corehole'] ? this.corehole : (this.parameters['throughhole'] ? this.throughhole_medium : this.d);
+		let fn = this.printer['resolutionCircle'];
+		let threadedLength = (this.l > this.b) ? this.b : this.l;
+
+		let tpl = cylinder({ d1 : this.d2, d2 : throughholeDiameter, h : this.k, center : true, fn : fn }).rotateX(180).translate([0,0,this.k / 2 + this.l ]);
 
 		/* Now it depends on if we should add an non-threaded part at the top */
 		if(this.b < this.l) {
