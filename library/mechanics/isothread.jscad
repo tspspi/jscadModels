@@ -267,7 +267,7 @@ window.jscad.tspi.din7991Screw = function(printer, params) {
 		let fn = this.printer['resolutionCircle'];
 		let threadedLength = (this.l > this.b) ? this.b : this.l;
 
-		let tpl = cylinder({ d1 : this.d2, d2 : throughholeDiameter, h : this.k, center : true, fn : fn }).rotateX(180).translate([0,0,this.k / 2 + this.l ]);
+		let tpl = cylinder({ d1 : this.d2, d2 : throughholeDiameter, h : this.k, center : true, fn : fn }).rotateX(180).translate([0,0, - this.k / 2 + this.l ]);
 
 		/* Now it depends on if we should add an non-threaded part at the top */
 		if(this.b < this.l) {
