@@ -78,7 +78,7 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 	this.knownClamp = new window.jscad.tspi.mechanics.basicScrewclamp(printer, { m : this.parameters['guiderodClampM'], screwLength : this.parameters['guiderodClampScrewLength'], rodDiameter : this.parameters['guiderodDiameter'], onlyPrintedPart : this.parameters['onlyPrintedPart'], minWallThickness : this.parameters['guiderodClampMinWall']});
 	this.knownGrubNut = new window.jscad.tspi.isoNut(printer, { m : 3 });
 	this.knownClampNut = new window.jscad.tspi.isoNut(printer, { m : this.parameters['guiderodClampM'] });
-	this.knownGrubScrew = new window.jscad.tspi.iso4762Screw(printer, { m : this.parameters['lm8uuGrubScrewM'], l : this.parameters['lm8uuGrubScrewLength'] });
+	this.knownGrubScrew = new window.jscad.tspi.iso4762Screw(printer, { m : this.parameters['lm8uuGrubScrewM'], l : this.parameters['lm8uuGrubScrewLength'], corehole : true, throughhole : false });
 
 	this.requiredWallWidth = Math.max(
 		this.knownClamp.getClampSizeX()/2 + Math.max(this.parameters['guiderodDiameter']/2, this.bearing.getOutsideDiameter()/2) + 2*this.parameters['minWallThickness'] + this.knownGrubScrew.l + this.knownGrubScrew.k,
@@ -87,8 +87,8 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 
 	if(this.parameters['sledSizeWallMin'] > this.requiredWallWidth) { this.requiredWallWidth = this.parameters['sledSizeWallMin']; }
 
-	this.sledRealSizeX = this.parameters['sledSizeInside']+2*this.requiredWallWidth;
-	this.sledRealSizeY = this.parameters['sledSizeInside']+2*this.requiredWallWidth;
+	this.sledRealSizeX = this.parameters['sledSizeInside']+2*this.requiredWallWidth - this.parameters['guiderodDiameter'];
+	this.sledRealSizeY = this.parameters['sledSizeInside']+2*this.requiredWallWidth - this.parameters['guiderodDiameter'];
 
 	let minRequiredSize = 2 * this.knownClamp.getClampSizeX() + this.knownClampNut.getHeight()*1.5;
 	if(this.sledRealSizeX < minRequiredSize) { this.sledRealSizeX = minRequiredSize; }
@@ -121,8 +121,8 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 			sled = cube({ size : [ sledSizeX, sledSizeY, sledSizeZ/2 ] }).translate([0,0,sledSizeZ/2]);
 			sled = union(
 				sled,
-				this.knownClamp.getModel().rotateX(90).translate([this.knownClamp.getClampSizeX()/2,this.knownClamp.getClampThickness(),this.knownClamp.getOffsetBelowRod()]),
-				this.knownClamp.getModel().rotateX(90).rotateZ(180).translate([-this.knownClamp.getClampSizeX()/2+sledSizeX,0,this.knownClamp.getOffsetBelowRod()])
+				this.knownClamp.getModel().rotateX(90).translate([this.knownClamp.getClampSizeX()/2+sledDYByScrew,this.knownClamp.getClampThickness(),this.knownClamp.getOffsetBelowRod()]),
+				this.knownClamp.getModel().rotateX(90).rotateZ(180).translate([-sledDYByScrew-this.knownClamp.getClampSizeX()/2+sledSizeX,0,this.knownClamp.getOffsetBelowRod()])
 			);
 
 			sled = difference(
@@ -154,7 +154,7 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 			let grubScrewNutCutDiameter = this.knownGrubNut.getHeight()*1.2;
 			let grubScrewNutCutDepth = this.knownClamp.getClampSizeY() - this.knownClamp.getOffsetBelowRod() - this.parameters['guiderodDiameter']/2 + this.knownGrubNut.getRadiusOutside();
 			let grubScrewNutCutWidth = this.knownGrubNut.getRadiusOutside()*2;
-			sled = difference(
+/*			sled = difference(
 				sled,
 				union(
 					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + sledSizeZ - grubScrewNutCutDepth]),
@@ -162,7 +162,7 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + sledSizeZ - grubScrewNutCutDepth]),
 					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2 + sledSizeZ - grubScrewNutCutDepth])
 				)
-			);
+			); */
 
 			nonprinted = union(
 				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
@@ -177,17 +177,21 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 
 			nonprinted = union(
 				nonprinted,
-				motedisDelrinNut.getModel().rotateZ(90).translate([sledSizeX/2,+36/2,sledSizeZ]),
+				motedisDelrinNut.getModel().rotateZ(90).translate([sledSizeX/2,+36/2,sledSizeZ + 15])
 //				motedisDelrinNutPressfitFixtureM5Screw.getTemplate().translate([sledSizeX/2+8.25,8,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2]),
 //				motedisDelrinNutPressfitFixtureM5Screw.getTemplate().translate([sledSizeX/2+8.25,28,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2])
+			);
+			sled = union(
+				sled,
+				cube({ size : [36, sledSizeY, 15], center : true }).translate([sledSizeX/2,+36/2,sledSizeZ + 15/2])
 			);
 			sled = difference(
 				sled,
 				union(
-					motedisDelrinNutPressfitFixtureM5Nut.getModel().translate([sledSizeX/2-8.25,8,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2]),
-					motedisDelrinNutPressfitFixtureM5Nut.getModel().translate([sledSizeX/2-8.25,28,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2]),
-					cylinder({ d : 5.8, h : motedisDelrinNutPressfitFixtureM5Nut.getHeight(), center : true }).translate([sledSizeX/2-8.25,8,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2]),
-					cylinder({ d : 5.8, h : motedisDelrinNutPressfitFixtureM5Nut.getHeight(), center : true }).translate([sledSizeX/2-8.25,28,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2])
+					motedisDelrinNutPressfitFixtureM5Nut.getModel().scale([1,1,1.5]).translate([sledSizeX/2-8.25,8,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2+15]),
+					motedisDelrinNutPressfitFixtureM5Nut.getModel().scale([1,1,1.5]).translate([sledSizeX/2-8.25,28,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2+15]),
+					cylinder({ d : 5.8, h : motedisDelrinNutPressfitFixtureM5Nut.getHeight(), center : true }).translate([sledSizeX/2-8.25,8,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2+15]),
+					cylinder({ d : 5.8, h : motedisDelrinNutPressfitFixtureM5Nut.getHeight(), center : true }).translate([sledSizeX/2-8.25,28,sledSizeZ - motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2+15])
 				)
 			);
 		} else {
@@ -226,7 +230,7 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 			let grubScrewNutCutDiameter = this.knownGrubNut.getHeight()*1.2;
 			let grubScrewNutCutDepth = this.knownClamp.getClampSizeY() - this.knownClamp.getOffsetBelowRod() - this.parameters['guiderodDiameter']/2 + this.knownGrubNut.getRadiusOutside();
 			let grubScrewNutCutWidth = this.knownGrubNut.getRadiusOutside()*2;
-			sled = difference(
+/*			sled = difference(
 				sled,
 				union(
 					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2]),
@@ -234,7 +238,7 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset,grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2]),
 					cube({ size : [grubScrewNutCutWidth, grubScrewNutCutDiameter, grubScrewNutCutDepth], center: true}).translate([sledSizeX-grubScrewOffset-this.bearing.getGrooveDistance(),grubScrewNutCutDiameter/2+this.parameters['minWallThickness']+this.knownGrubScrew.k, grubScrewNutCutDepth/2])
 				)
-			);
+			); */
 
 			nonprinted = union(
 				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
