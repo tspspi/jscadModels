@@ -15,8 +15,8 @@ function getParameterDefinitions() {
 }
 
 function main(params) {
-//	let fn = 256;
-	let fn = 32;
+	let fn = 256;
+//	let fn = 32;
 	let wsMountScrewWS = new window.jscad.tspi.iso4762Screw( { resolutionCircle  : fn }, { m : 5, l : 13,  corehole : true, throughhole : false });
     let wsMountScrew = new window.jscad.tspi.din7991Screw( { resolutionCircle  : fn }, { m : 4, l : 13,  corehole : true, throughhole : false });
     let wsMountScrew2 = new window.jscad.tspi.din7991Screw( { resolutionCircle  : fn }, { m : 4, l : 5, corehole : true, throughhole : false });
@@ -59,13 +59,13 @@ function main(params) {
 	            cube({ size : [10, 30, 2 ], center : true }).translate([5+65+105,0,10-1])
 	        ) */
 			union(
-				wsMountScrew2.getTemplate().rotateX(180).translate([5, 0, wsMountScrew2.l+wsMountScrew2.k]),
+				wsMountScrew2.getTemplate().rotateX(180).translate([5, 0, wsMountScrew2.l]),
 				cube({ size : [20, 30, 2 ], center : true }).translate([0,0,4-1]),
 
-				wsMountScrew2.getTemplate().rotateX(180).translate([5+65, 0, wsMountScrew2.l+wsMountScrew2.k]),
+				wsMountScrew2.getTemplate().rotateX(180).translate([5+65, 0, wsMountScrew2.l]),
 				cube({ size : [10, 30, 2 ], center : true }).translate([5+65,0,4-1]),
 
-				wsMountScrew2.getTemplate().rotateX(180).translate([5+65+105, 0, wsMountScrew2.l+wsMountScrew2.k]),
+				wsMountScrew2.getTemplate().rotateX(180).translate([5+65+105, 0, wsMountScrew2.l]),
 				cube({ size : [10, 30, 2 ], center : true }).translate([5+65+105,0,4-1])
 			)
 		);
@@ -83,8 +83,8 @@ function main(params) {
 	        union(
 	            cylinder({ d : p3diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p3diam/2+5]),
 	            cylinder({ d : 4, h : 8, center : true, fn : fn }).translate([0,0,5/2]),
-				cylinder({ d : 4, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-11,0,p3_zlen/2]),
-				cylinder({ d : 4, h : p3_zlen, center : true, fn : fn }).translate([-p3_xlen/2+11,0,p3_zlen/2])
+				cylinder({ d : 4, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-13,0,p3_zlen/2]),
+				cylinder({ d : 4, h : p3_zlen, center : true, fn : fn }).translate([-p3_xlen/2+13,0,p3_zlen/2])
 	        )
 	    );
 	    p3 = difference(
@@ -99,7 +99,7 @@ function main(params) {
 	let p3_2 = null;
 	if(params['p4enable']) {
 		p3_2 = difference(
-			cube({ size : [p3_xlen, p3_ylen, p3_zlen], center : true }).translate([0,0,p3_zlen/2]),
+			cube({ size : [p3_xlen, p3_ylen, p3_zlen-4], center : true }).translate([0,0,p3_zlen/2+2]),
 	        union(
 	            cylinder({ d : p3diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p3diam/2+5])
 /*				cylinder({ d : 6.5, h : p3_zlen, center : true, fn : fn }).translate([ p3_xlen/2-12,0,p3_zlen/2]),
@@ -113,7 +113,7 @@ function main(params) {
 			p3_2,
 			difference(
 				cube({ size : [100, 10, 100], center : true }),
-				cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
+				cylinder( { d : 80+15-17, h : 10, center : true, fn : fn }).rotateX(90)
 			).translate([0,0,0])
 		);
 
@@ -139,11 +139,11 @@ function main(params) {
 		p3_2 = difference(
 			p3_2,
 			union(
-				wsMountScrew.getTemplate().translate([+p3_xlen/2-11,0,p3_zlen/2-wsMountScrew.k-wsMountScrew.l-1.5-8]),
-				wsMountScrew.getTemplate().translate([-p3_xlen/2+11,0,p3_zlen/2-wsMountScrew.k-wsMountScrew.l-1.5-8]),
+				wsMountScrew.getTemplate().translate([+p3_xlen/2-13,0,p3_zlen/2-wsMountScrew.l-1.5-8]),
+				wsMountScrew.getTemplate().translate([-p3_xlen/2+13,0,p3_zlen/2-wsMountScrew.l-1.5-8]),
 
-				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([+p3_xlen/2-11,0,100/2 + p3_zlen/2-1.5-8]),
-				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([-p3_xlen/2+11,0,100/2 + p3_zlen/2-1.5-8])
+				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([+p3_xlen/2-13,0,100/2 + p3_zlen/2-1.5-8]),
+				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([-p3_xlen/2+13,0,100/2 + p3_zlen/2-1.5-8])
 			)
 		);
 	}
@@ -160,8 +160,8 @@ function main(params) {
 	        union(
 	            cylinder({ d : p4diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p4diam/2+5]),
 	            cylinder({ d : 4, h : 8, center : true, fn : fn }).translate([0,0,5/2]),
-				cylinder({ d : 4, h : p4_zlen, center : true, fn : fn }).translate([ p4_xlen/2-9,0,p4_zlen/2]),
-				cylinder({ d : 4, h : p4_zlen, center : true, fn : fn }).translate([-p4_xlen/2+9,0,p4_zlen/2])
+				cylinder({ d : 4, h : p4_zlen, center : true, fn : fn }).translate([ p4_xlen/2-12,0,p4_zlen/2]),
+				cylinder({ d : 4, h : p4_zlen, center : true, fn : fn }).translate([-p4_xlen/2+12,0,p4_zlen/2])
 	        )
 	    );
 		p4 = difference(
@@ -177,7 +177,7 @@ function main(params) {
 
 	if(params['p6enable']) {
 		p4_2 = difference(
-				cube({ size : [p4_xlen, p4_ylen, p4_zlen], center : true }).translate([0,0,p4_zlen/2]),
+			cube({ size : [p4_xlen, p4_ylen, p4_zlen-4], center : true }).translate([0,0,p4_zlen/2+2]),
 	        union(
 	            cylinder({ d : p4diam, h : 10, center : true, fn : fn }).rotateX(90).translate([0,0,p4diam/2+5])
 				/*
@@ -193,14 +193,14 @@ function main(params) {
 			p4_2,
 			difference(
 				cube({ size : [100, 10, 100], center : true }),
-				cylinder( { d : 80+15-12, h : 10, center : true, fn : fn }).rotateX(90)
+				cylinder( { d : 80+15-18, h : 10, center : true, fn : fn }).rotateX(90)
 			).translate([0,0,0])
 		);
 
 		p4_2 = difference(
 			p4_2,
 			difference(
-				cube({ size : [100, 10, 100], center : true}),
+				cube({ size : [100, 10, 90], center : true}),
 				union(
 					cylinder({ d : 80+15-28, h : 10, center : true, fn : fn}).rotateX(90),
 					cube({ size : [150, 150, 26-16], center : true}).translate([0,0,0])
@@ -211,11 +211,11 @@ function main(params) {
 		p4_2 = difference(
 			p4_2,
 			union(
-				wsMountScrew.getTemplate().translate([+p4_xlen/2-9,0,p4_zlen/2-wsMountScrew.k-wsMountScrew.l-0.5-8]),
-				wsMountScrew.getTemplate().translate([-p4_xlen/2+9,0,p4_zlen/2-wsMountScrew.k-wsMountScrew.l-0.5-8]),
+				wsMountScrew.getTemplate().translate([+p4_xlen/2-12,0,p4_zlen/2-wsMountScrew.l-0.5-8]),
+				wsMountScrew.getTemplate().translate([-p4_xlen/2+12,0,p4_zlen/2-wsMountScrew.l-0.5-8]),
 
-				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([+p4_xlen/2-9,0,100/2 + p4_zlen/2-0.5-8]),
-				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([-p4_xlen/2+9,0,100/2 + p4_zlen/2-0.5-8])
+				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([+p4_xlen/2-12,0,100/2 + p4_zlen/2-0.5-8]),
+				cylinder({ d : wsMountScrew.d2, h : 100, center : true }).translate([-p4_xlen/2+12,0,100/2 + p4_zlen/2-0.5-8])
 			)
 		);
 
