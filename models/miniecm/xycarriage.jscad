@@ -198,8 +198,8 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 			sled = cube({ size : [ sledSizeX, sledSizeY, sledSizeZ/2 ] }).translate([0,0,0]);
 			sled = union(
 				sled,
-				this.knownClamp.getModel().rotateX(90).translate([this.knownClamp.getClampSizeX()/2,this.knownClamp.getClampThickness(),this.knownClamp.getOffsetBelowRod()+sledSizeZ/2]),
-				this.knownClamp.getModel().rotateX(90).rotateZ(180).translate([-this.knownClamp.getClampSizeX()/2+sledSizeX,0,this.knownClamp.getOffsetBelowRod()+sledSizeZ/2])
+				this.knownClamp.getModel().rotateX(90).translate([this.knownClamp.getClampSizeX()/2+sledDYByScrew,this.knownClamp.getClampThickness(),this.knownClamp.getOffsetBelowRod()+sledSizeZ/2]),
+				this.knownClamp.getModel().rotateX(90).rotateZ(180).translate([-sledDYByScrew-this.knownClamp.getClampSizeX()/2+sledSizeX,0,this.knownClamp.getOffsetBelowRod()+sledSizeZ/2])
 			);
 			sled = difference(
 				sled,
@@ -240,7 +240,24 @@ window.jscad.tspi.miniecm.carriagexy = function(printer, params) {
 				)
 			); */
 
+			sled = union(
+				sled,
+				cube({ size : [36, sledSizeY, 15], center : true }).translate([sledSizeX/2,+36/2,-15/2])
+			);
+
+			sled = difference(
+				sled,
+				union(
+					motedisDelrinNutPressfitFixtureM5Nut.getModel().scale([1,1,1.5]).translate([sledSizeX/2-8.25,8,motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2-15]),
+					motedisDelrinNutPressfitFixtureM5Nut.getModel().scale([1,1,1.5]).translate([sledSizeX/2-8.25,28,motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2-15]),
+					cylinder({ d : 5.8, h : 2*motedisDelrinNutPressfitFixtureM5Nut.getHeight(), center : true }).translate([sledSizeX/2-8.25,8,motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2-15]),
+					cylinder({ d : 5.8, h : 2*motedisDelrinNutPressfitFixtureM5Nut.getHeight(), center : true }).translate([sledSizeX/2-8.25,28,motedisDelrinNutPressfitFixtureM5Nut.getHeight()/2-15])
+				)
+			);
+
 			nonprinted = union(
+				motedisDelrinNut.getModel().rotateZ(90).translate([sledSizeX/2,+36/2,-15-13]),
+
 				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset,grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
 				this.knownGrubScrew.getTemplate().rotateX(90).translate([grubScrewOffset+this.bearing.getGrooveDistance(),grubScrewRealLen,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
 
