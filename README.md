@@ -31,6 +31,8 @@ top of the model script.
   * A template for aluminium profiles
     * [20x20, B-type](./library/mechanics/aluprofile.jscad) or multiples with 6mm nut
   * Templates for [Motedis Delrin AntiBacklash Nuts](./library/mechanics/motedisDelrin.jscad)
+  * Templates and models for [SMA.. and SMA..L bearing blocks](./library/mechanics/bearingblockSMAUU.jscad)
+    housing typical LM..UU and LM..LUU bearings (usually made out of aluminum)
 * Packaging
   * A [simple box](./library/packaging/basicbox1.jscad) generator with rounded edges
 * Toys
