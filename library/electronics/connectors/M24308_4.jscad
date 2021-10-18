@@ -15,6 +15,7 @@ window.jscad.tspi.electronics.connectors.M24308_4 = function(printer, params) {
         { name: 'ispackage',                    type:  'boolean',	default : false			},
         { name: 'isMale',                       type:  'boolean',   default : false         },
 
+        { name: 'fillHoles',                    type:  'boolean',   default : false         },
         { name: 'onlyblind',                    type:  'boolean',   default : false         },
     ];
 
@@ -110,9 +111,6 @@ window.jscad.tspi.electronics.connectors.M24308_4 = function(printer, params) {
         let housingPlate = difference(
             cube({ size : [ this.A, this.L, this.E ], center : true}),
             union(
-                cylinder( { d : 3.05, h : this.L, center : true } ).rotateX(90).translate([-this.C/2, 0, 0]),
-                cylinder( { d : 3.05, h : this.L, center : true } ).rotateX(90).translate([ this.C/2, 0, 0]),
-
                 roundToolEdge.translate([-this.A/2+(this.E-this.J)/2, 0, this.J/2]),
                 roundToolEdge.translate([-this.A/2+(this.E-this.J)/2, 0, this.J/2]).mirroredX(),
                 roundToolEdge.translate([-this.A/2+(this.E-this.J)/2, 0, this.J/2]).mirroredZ(),
@@ -120,66 +118,86 @@ window.jscad.tspi.electronics.connectors.M24308_4 = function(printer, params) {
             )
         );
 
+        if(!this.parameters['fillHoles']) {
+            housingPlate = difference(
+                housingPlate,
+                union(
+                    cylinder( { d : 3.05, h : this.L, center : true } ).rotateX(90).translate([-this.C/2, 0, 0]),
+                    cylinder( { d : 3.05, h : this.L, center : true } ).rotateX(90).translate([ this.C/2, 0, 0])
+                )
+            );
+        }
+
         /* In case we only want a blind cover we are done ... */
         if(this.parameters['onlyblind']) { return housingPlate; }
 
         let tan10Deg = Math.tan(10 * Math.PI / 180);
 
         /* Male connector */
-        let outsideShell = difference(
-            linear_extrude(
-                { height : this.G },
-                new CSG.Polygon2D(
-                    [
-                        [ -this.H/2, -this.J/2, 0 ],
-                        [ -this.H/2 + this.J*tan10Deg, this.J/2, 0 ],
-                        [ this.H/2 - this.J*tan10Deg, this.J/2, 0 ],
-                        [ this.H/2, -this.J/2, 0 ]
-                    ],
-                    true
-                )
-            ),
-            linear_extrude(
-                { height : this.G },
-                new CSG.Polygon2D(
-                    [
-                        [ -this.H/2+0.5, -this.J/2+0.5, 0 ],
-                        [ -this.H/2 + this.J*tan10Deg + 0.5, this.J/2 - 0.5, 0 ],
-                        [ this.H/2 - this.J*tan10Deg - 0.5, this.J/2 - 0.5, 0 ],
-                        [ this.H/2 - 0.5, -this.J/2 + 0.5, 0 ]
-                    ],
-                    true
-                )
+
+        let outsideShell = linear_extrude(
+            { height : this.G },
+            new CSG.Polygon2D(
+                [
+                    [ -this.H/2, -this.J/2, 0 ],
+                    [ -this.H/2 + this.J*tan10Deg, this.J/2, 0 ],
+                    [ this.H/2 - this.J*tan10Deg, this.J/2, 0 ],
+                    [ this.H/2, -this.J/2, 0 ]
+                ],
+                true
             )
-        ).rotateX(90).translate([0, -this.L/2, 0]);
+        );
+        if(!this.parameters['fillHoles']) {
+            outsideShell = difference(
+                outsideShell,
+                linear_extrude(
+                    { height : this.G },
+                    new CSG.Polygon2D(
+                        [
+                            [ -this.H/2+0.5, -this.J/2+0.5, 0 ],
+                            [ -this.H/2 + this.J*tan10Deg + 0.5, this.J/2 - 0.5, 0 ],
+                            [ this.H/2 - this.J*tan10Deg - 0.5, this.J/2 - 0.5, 0 ],
+                            [ this.H/2 - 0.5, -this.J/2 + 0.5, 0 ]
+                        ],
+                        true
+                    )
+                )
+            );
+        };
+        outsideShell = outsideShell.rotateX(90).translate([0, -this.L/2, 0]);
 
         /* Female connector */
-        let insideShell = difference(
-            linear_extrude(
-                { height : this.G },
-                new CSG.Polygon2D(
-                    [
-                        [ -this.B/2 - 0.5, -this.D/2 - 0.5, 0 ],
-                        [ -this.B/2 - 0.5 + this.D*tan10Deg, this.D/2 + 0.5, 0 ],
-                        [ this.B/2 + 0.5 - this.D*tan10Deg, this.D/2 + 0.5, 0 ],
-                        [ this.B/2 + 0.5, -this.D/2 - 0.5, 0 ]
-                    ],
-                    true
-                )
-            ),
-            linear_extrude(
-                { height : this.G },
-                new CSG.Polygon2D(
-                    [
-                        [ -this.B/2, -this.D/2, 0 ],
-                        [ -this.B/2 + this.D*tan10Deg, this.D/2, 0 ],
-                        [ this.B/2 - this.D*tan10Deg, this.D/2, 0 ],
-                        [ this.B/2, -this.D/2, 0 ]
-                    ],
-                    true
-                )
+
+        let insideShell = linear_extrude(
+            { height : this.G },
+            new CSG.Polygon2D(
+                [
+                    [ -this.B/2 - 0.5, -this.D/2 - 0.5, 0 ],
+                    [ -this.B/2 - 0.5 + this.D*tan10Deg, this.D/2 + 0.5, 0 ],
+                    [ this.B/2 + 0.5 - this.D*tan10Deg, this.D/2 + 0.5, 0 ],
+                    [ this.B/2 + 0.5, -this.D/2 - 0.5, 0 ]
+                ],
+                true
             )
-        ).rotateX(90).translate([0, -this.L/2, 0]);
+        );
+        if(!(this.parameters['fillHoles'])) {
+            insideShell = difference(
+                insideShell,
+                linear_extrude(
+                    { height : this.G },
+                    new CSG.Polygon2D(
+                        [
+                            [ -this.B/2, -this.D/2, 0 ],
+                            [ -this.B/2 + this.D*tan10Deg, this.D/2, 0 ],
+                            [ this.B/2 - this.D*tan10Deg, this.D/2, 0 ],
+                            [ this.B/2, -this.D/2, 0 ]
+                        ],
+                        true
+                    )
+                )
+            );
+        }
+        insideShell = insideShell.rotateX(90).translate([0, -this.L/2, 0]);
 
         /* Connector receptible, worst case */
         let connectorReceptible = linear_extrude(
@@ -217,9 +235,7 @@ window.jscad.tspi.electronics.connectors.M24308_4_Insert = function(printer, par
 
 }
 
-/*
 function main() {
     testConnector = new window.jscad.tspi.electronics.connectors.M24308_4({}, { 'type' : 'M24308/4-2Z' })
     return testConnector.getTemplate();
 }
-*/
