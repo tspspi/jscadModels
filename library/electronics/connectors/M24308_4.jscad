@@ -209,7 +209,7 @@ window.jscad.tspi.electronics.connectors.M24308_4 = function(printer, params) {
             );
         }
 
-        return housingPlate;
+        return housingPlate.setColor([0.75, 0.75, 0.75]);
     }
 }
 
