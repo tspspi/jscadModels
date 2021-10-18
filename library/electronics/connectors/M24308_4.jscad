@@ -211,7 +211,7 @@ window.jscad.tspi.electronics.connectors.M24308_4 = function(printer, params) {
                 ],
                 true
             )
-        ).rotateX(90).translate([0, this.L/2 + 9.52, 0 ]);
+        ).rotateX(90).translate([0, this.L/2 + 9, 0 ]);
 
         if(this.isMale) {
             housingPlate = union(
