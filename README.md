@@ -33,6 +33,7 @@ top of the model script.
   * Templates for [Motedis Delrin AntiBacklash Nuts](./library/mechanics/motedisDelrin.jscad)
   * Templates and models for [SMA.. and SMA..L bearing blocks](./library/mechanics/bearingblockSMAUU.jscad)
     housing typical LM..UU and LM..LUU bearings (usually made out of aluminum)
+  * Templates for [CF vacuum flanges](./library/mechanics/cfflange.jscad) (as specified by ISO3669)
 * Packaging
   * A [simple box](./library/packaging/basicbox1.jscad) generator with rounded edges
 * Toys
