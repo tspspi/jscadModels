@@ -169,36 +169,43 @@ window.jscad.tspi.miniecm.motormount = function(printer, params) {
 				guiderod2,
 				cube({ size : [ 2, 5*upperCaseY, 15 ], center : true }).translate([-this.knownClamp.getClampSizeX()/2-sledDYByScrew,0,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]),
 				cube({ size : [ 5*upperCaseY, 2, 15 ], center : true }).translate([0,this.knownClamp.getClampSizeX()/2,this.bearing.getLength()/2]).translate([0,sledDYByScrew,this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2]).translate([0,-5,-10]),
+
+				/* Screws for profile mount */
 				union(
 					this.knownProfileScrew.getTemplate(),
-					cylinder({d : 17, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
+					cylinder({d : 8, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
 				).rotateX(-90).translate([-4.8+20,-30.1+20,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2+60+9]),
 				union(
 					this.knownProfileScrew.getTemplate(),
-					cylinder({d : 17, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
+					cylinder({d : 8, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
 				).rotateX(-90).translate([-4.8+20,-30.1+20,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2-7]),
 				union(
 					this.knownProfileScrew.getTemplate(),
-					cylinder({d : 17, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
+					cylinder({d : 8, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
 				).rotateX(-90).translate([-4.8+20,-30.1+20,-42.3-4*this.parameters['minWallThickness'] - 17/2]),
 				union(
 					this.knownProfileScrew.getTemplate(),
-					cylinder({d : 17, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
+					cylinder({d : 8, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
 				).rotateY(-90).translate([20-4.8-10,-30.1+20-10,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2+60+9]),
 				union(
 					this.knownProfileScrew.getTemplate(),
-					cylinder({d : 17, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
+					cylinder({d : 8, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
 				).rotateY(-90).translate([20-4.8-10,-30.1+20-10,this.knownClamp.getClampSizeY()+this.knownClamp.getOffsetBelowRod()+this.parameters['guiderodDiameter']/2-7]),
 				union(
 					this.knownProfileScrew.getTemplate(),
-					cylinder({d : 17, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
+					cylinder({d : 8, h : 50, center : true}).translate([0,0,50/2+this.knownProfileScrew.l+this.knownProfileScrew.k]).setColor([1,0,0])
 				).rotateY(-90).translate([20-4.8-10,-30.1+20-10,-42.3-4*this.parameters['minWallThickness'] - 17/2]),
 
-				cylinder({d : 17, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2+15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ+15.7]),
-				cylinder({d : 17, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2+15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ-15.7]),
+				/* Access to motor mount screws */
+				cylinder({d : 8, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2+15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ+15.7]),
+				cylinder({d : 8, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2+15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ-15.7]),
 
-				cylinder({d : 17, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2-15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ+15.7]).rotateZ(90).translate([-5, this.parameters['minWallThickness']+this.parameters['stepperZLength'], -(upperLeadScrewPositionZ-42.3/2 - 2*this.parameters['minWallThickness']) - (42.3 + 4*this.parameters['minWallThickness'])/2 -15 -13/2]),
-				cylinder({d : 17, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2-15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ-15.7]).rotateZ(90).translate([-5, this.parameters['minWallThickness']+this.parameters['stepperZLength'], -(upperLeadScrewPositionZ-42.3/2 - 2*this.parameters['minWallThickness']) - (42.3 + 4*this.parameters['minWallThickness'])/2 -15 -13/2])
+				cylinder({d : 8, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2-15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ+15.7]).rotateZ(90).translate([-5, this.parameters['minWallThickness']+this.parameters['stepperZLength'], -(upperLeadScrewPositionZ-42.3/2 - 2*this.parameters['minWallThickness']) - (42.3 + 4*this.parameters['minWallThickness'])/2 -15 -13/2]),
+				cylinder({d : 8, h : 50, center : true}).translate([0,0,-50+6.5]).translate([0,0,upperCaseY/2]).rotateX(90).translate([-sledSizeY/2-15.7,-this.parameters['stepperZLength']+upperCaseY,upperLeadScrewPositionZ-15.7]).rotateZ(90).translate([-5, this.parameters['minWallThickness']+this.parameters['stepperZLength'], -(upperLeadScrewPositionZ-42.3/2 - 2*this.parameters['minWallThickness']) - (42.3 + 4*this.parameters['minWallThickness'])/2 -15 -13/2]),
+
+				/* Space for flexible coupler */
+				cylinder({d : 25, h : 50, center : true, fn : 256 }).translate([0,0,50/2]).rotateZ(-90).rotateX(90).rotateZ(180).rotateY(180).translate([-sledSizeY/2,0,upperLeadScrewPositionZ]),
+				cylinder({d : 25, h : 50, center : true, fn : 256 }).translate([0,0,50/2]).rotateZ(-90).rotateX(90).rotateZ(180).rotateY(180).translate([-sledSizeY/2,0,upperLeadScrewPositionZ]).rotateZ(90).translate([-5, this.parameters['minWallThickness']+this.parameters['stepperZLength'], -(upperLeadScrewPositionZ-42.3/2 - 2*this.parameters['minWallThickness']) - (42.3 + 4*this.parameters['minWallThickness'])/2 -15 -13/2])
 			)
 		);
 /*
@@ -213,13 +220,16 @@ window.jscad.tspi.miniecm.motormount = function(printer, params) {
 			)
 		);
 */
-return union(
-	carrier1,
-	carrier2,
-/*	guiderod,
-	guiderod2, */
-	body
-//	this.stepper.getModel().scale(1.02).rotateZ(90).rotateX(90).rotateZ(180).rotateY(180).translate([-sledSizeY/2,0,upperLeadScrewPositionZ])
+return difference(
+	union(
+		carrier1,
+		carrier2,
+		/*	guiderod,
+		guiderod2, */
+		body
+		//	this.stepper.getModel().scale(1.02).rotateZ(90).rotateX(90).rotateZ(180).rotateY(180).translate([-sledSizeY/2,0,upperLeadScrewPositionZ])
+	),
+	cube({ size : [17, 5, 13 ], center : true}).translate([0,0,50/2]).rotateZ(-90).rotateX(90).rotateZ(180).rotateY(180).translate([-sledSizeY/2-21.5,-2*this.parameters['stepperZLength']+11,upperLeadScrewPositionZ])
 );
 		printable.push(carrier1);
 
