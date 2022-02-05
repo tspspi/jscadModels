@@ -32,6 +32,17 @@
 	OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/*
+	Example:
+
+	include('/mechanics/motedisKFL08.jscad');
+
+	function main(params) {
+		let bearingBlock = new window.jscad.tspi.motedis.kfl08Template({}, {});
+
+		return bearingBlock.getTemplate();
+	}
+*/
 
 if(typeof window === 'undefined') { window = new Object(); }
 if(typeof window.jscad !== 'object') { window.jscad = new Object(); }
@@ -177,11 +188,4 @@ window.jscad.tspi.motedis.kfl08Template = function(printer, params) {
 			);
 		}
 	}
-}
-
-
-function main(params) {
-	let bearingBlock = new window.jscad.tspi.motedis.kfl08Template({}, {});
-
-	return bearingBlock.getTemplate();
 }
