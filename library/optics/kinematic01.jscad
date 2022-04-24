@@ -145,10 +145,10 @@ window.jscad.tspi.optics.kinematicmountBasis = function(printer, params) {
         frontplate = difference(
             frontplate,
             union(
-                this.springscrewnut.getModel().translate( [ pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - this.springscrewnut.getRadiusOutside() - minwall,  -this.springscrewnut.h / 2 + this.thickness/2 ] ),
-                this.springscrewnut.getModel().translate( [ -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall),  -this.springscrewnut.h / 2 + this.thickness/2 ] ),
-                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - this.springscrewnut.getRadiusOutside() - minwall, 0]),
-                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([-(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), 0])
+                this.springscrewnut.getModel().translate( [ pw/2 - this.springscrewnut.getRadiusOutside() - minwall, 0,  -this.springscrewnut.h / 2 + this.thickness/2 ] ),
+                this.springscrewnut.getModel().translate( [ 0, -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall),  -this.springscrewnut.h / 2 + this.thickness/2 ] ),
+                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([pw/2 - this.springscrewnut.getRadiusOutside() - minwall, 0, 0]),
+                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([0, -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), 0])
             )
         );
 
@@ -167,13 +167,13 @@ window.jscad.tspi.optics.kinematicmountBasis = function(printer, params) {
         backplate = difference(
             backplate,
             union(
-                this.adjustscrewnut.getModel().translate( [ pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - 4*this.adjustscrewnut.getRadiusOutside() - minwall,  this.adjustscrewnut.h/2 - this.thickness - spacingFrontBack - minwall/2  ] ),
-                this.adjustscrewnut.getModel().translate( [ -(pw/2 - 4*this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.adjustscrewnut.getRadiusOutside() - minwall),  this.adjustscrewnut.h/2 - this.thickness - spacingFrontBack - minwall/2 ] ),
-                cylinder({d : this.adjustscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([ pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - 4*this.adjustscrewnut.getRadiusOutside() - minwall, - this.thickness - spacingFrontBack ]),
-                cylinder({d : this.adjustscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([-(pw/2 - 4*this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.adjustscrewnut.getRadiusOutside() - minwall), - this.thickness - spacingFrontBack  ]),
+                this.adjustscrewnut.getModel().translate( [ pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - this.adjustscrewnut.getRadiusOutside() - minwall,  this.adjustscrewnut.h/2 - this.thickness - spacingFrontBack - minwall/2  ] ),
+                this.adjustscrewnut.getModel().translate( [ -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.adjustscrewnut.getRadiusOutside() - minwall),  this.adjustscrewnut.h/2 - this.thickness - spacingFrontBack - minwall/2 ] ),
+                cylinder({d : this.adjustscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([ pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - this.adjustscrewnut.getRadiusOutside() - minwall, - this.thickness - spacingFrontBack ]),
+                cylinder({d : this.adjustscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([-(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.adjustscrewnut.getRadiusOutside() - minwall), - this.thickness - spacingFrontBack  ]),
 
-                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([pw/2 - this.springscrewnut.getRadiusOutside() - minwall, pw/2 - this.springscrewnut.getRadiusOutside() - minwall, - this.thickness - spacingFrontBack ]),
-                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([-(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), - this.thickness - spacingFrontBack  ])
+                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([pw/2 - this.springscrewnut.getRadiusOutside() - minwall, 0, - this.thickness - spacingFrontBack ]),
+                cylinder({d : this.springscrewnut.throughhole_coarse, h : this.thickness, center : true }).translate([0, -(pw/2 - this.springscrewnut.getRadiusOutside() - minwall), - this.thickness - spacingFrontBack  ])
             )
         );
 
