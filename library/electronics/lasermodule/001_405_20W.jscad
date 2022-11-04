@@ -1,5 +1,5 @@
 /*
-	HY86N forked light barrier model
+	20W laser module (including heat sink)
 
 	If you think this code was useful BTC
 	contributions are welcome at
